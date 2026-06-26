@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════
+     SGCC — Study Material Page
+     Displays downloadable/viewable study resources per course.
+     Cards are rendered from localStorage (sgcc_materials + sgcc_courses)
+     by the 'syncMaterialsFromAdmin()' IIFE at the bottom of the file.
+     Clicking 'View' opens a modal with course details + a download link.
+     Clicking 'Download' either starts the download or shows an
+     'unavailable' modal if no URL has been set by the admin yet.
+     ═══════════════════════════════════════════════════════ -->
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<link
+href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap"
+rel="stylesheet" />
+<link
+href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="./tailwind-config.js"></script>
+<link rel="stylesheet" href="./style.css" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="./theme.js"></script>
+</head>
+<body
+class="bg-background text-on-background font-body scanline min-h-screen selection:bg-primary selection:text-white">
+<nav
+class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_4_20px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-center px-6 md:px-12 lg:px-20 py-4 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-3">
+<img src="./logo.png?v=5" fetchpriority="high" alt="SGCC Logo" class="h-14 w-14 xl:h-16 xl:w-16 object-cover rounded-2xl drop-shadow-[0_0_12px_rgba(99,102,241,0.5)] shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-indigo-400/20 hover:border-indigo-400/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:scale-105 transition-all duration-300">
+<div class="flex flex-col leading-tight mr-8">
+<span class="text-xl sm:text-2xl md:text-3xl font-headline font-extrabold tracking-tight" style="background: linear-gradient(90deg, #ffe04a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SGCC</span>
+<span class="text-[11px] sm:text-xs md:text-sm font-label font-semibold tracking-wider text-on-surface-variant uppercase mt-1 hidden sm:block">Shree Ganesh Computer Classes</span>
+</div>
+<div class="hidden md:flex items-center gap-6 font-headline font-bold tracking-tight text-sm">
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95"
+href="/index.html">Home</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95"
+href="/courses.html">Courses</a>
+<a class="nav-link text-secondary border-secondary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95"
+href="/study-material.html">Study Material</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95"
+href="/about.html">About Us</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95"
+href="/contact.html">Contact Us</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span
+class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input id="search-input"
+class="bg-surface-container border-b border-primary/40 focus:border-primary text-xs pl-10 pr-4 py-2 w-64 outline-none transition-all font-label"
+placeholder="Search resources..." type="text" />
+</div>
+<button id="theme-toggle" class="theme-toggle-pill" aria-label="Toggle Theme">
+<span class="theme-toggle-track"><span class="theme-toggle-stars"><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span></span><span class="theme-toggle-sun-rays"></span></span>
+<span class="theme-toggle-thumb"><span class="material-symbols-outlined theme-toggle-sun">wb_sunny</span><span class="material-symbols-outlined theme-toggle-moon">nights_stay</span></span>
+</button>
+<button
+class="enquire-btn bg-primary px-6 py-2 rounded-lg font-headline font-bold text-on-primary hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all active:scale-95">
+Enquire Now
+</button>
+</div>
+</div>
+</nav>
+<main class="pt-36 md:pt-40 pb-20 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
+<header class="mb-16 relative py-4">
+<div class="absolute -top-10 -left-10 w-40 h-40 bg-primary/30 blur-[80px] rounded-full"></div>
+<h1
+class="text-4xl md:text-6xl font-headline font-extrabold tracking-tighter mb-6 neon-glow-secondary text-secondary">
+Study Material</h1>
+<p class="text-on-surface-variant max-w-2xl font-body leading-relaxed text-base md:text-lg">
+Access high-quality digital resources, technical documentation, and practice sheets curated by industry experts.
+Empowering your learning journey with futuristic insights.
+</p>
+</header>
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-aos="fade-up" data-aos-duration="1000">
+<div
+class="bg-surface-container border border-outline-variant group hover:border-primary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-primary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="desktop_windows">desktop_windows</span>
+<div
+class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 font-label text-[10px] font-bold uppercase tracking-widest z-10">
+Module</div>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Study Guide</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-primary transition-colors">MKCL’S MSCIT</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Complete IT literacy curriculum with practical
+assignments and theory notes.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-secondary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-secondary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="router">router</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="description">description</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Manual</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-secondary transition-colors">Diploma in IT
+Hardware &amp; Networking</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Comprehensive guide on hardware components,
+troubleshooting, and network topologies.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-tertiary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-tertiary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="code">code</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="slideshow">slideshow</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">PPTX</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-tertiary transition-colors">Web Designing
+&amp; Web Development</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Frontend and backend essentials, HTML/CSS, JS,
+and server-side logic resources.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-primary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-primary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="brush">brush</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Design Kit</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-primary transition-colors">Graphic Designing
+</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Color theory, typography rules, and asset packs
+for standard design software.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-secondary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-secondary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="layers">layers</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Cheat Sheet</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-secondary transition-colors">UI UX Designing
+</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Wireframing templates, user journey mapping
+tools, and prototyping best practices.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-tertiary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-tertiary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="mouse">mouse</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="description">description</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Notes</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-tertiary transition-colors">Basics of
+Computer</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Foundational knowledge of computer operations, OS
+navigation, and file management.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-primary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-primary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="memory">memory</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">PDF</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-primary transition-colors">Computer
+Fundamentals</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">In-depth look at computer architecture, memory
+units, and peripheral devices.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-secondary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-secondary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="print">print</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="zip_archive">folder_zip</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Practice Files</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-secondary transition-colors">Office
+Automation</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Templates and exercises for mastering Word,
+Excel, and PowerPoint for office environments.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-tertiary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-tertiary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="account_balance">account_balance</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">E-Book</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-tertiary transition-colors">Financial
+Accounting with Tally ERP</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Complete manual for GST, ledger management, and
+financial reporting using Tally.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-primary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-primary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="keyboard">keyboard</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="description">description</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">DOCX</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-primary transition-colors">Marathi Typing
+with Advanced Methods and AI</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Keyboard layout charts, typing exercises, and AI
+tools for regional language typing speed.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-secondary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-secondary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="keyboard">keyboard</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="zip_archive">folder_zip</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Software/Docs</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-secondary transition-colors">English and
+Hindi Typing with Advanced Methods and AI</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Touch typing methodologies, software resources,
+and AI-assisted accuracy improvement techniques.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-tertiary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-tertiary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="terminal">terminal</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Reference</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-tertiary transition-colors">Basics of C, C++,
+C#, Java, Python, Kotlin Programming</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Syntax cheat sheets, core concept explanations,
+and basic algorithmic problem sets.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-primary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-primary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="integration_instructions">integration_instructions</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="zip_archive">folder_zip</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Source Code</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-primary transition-colors">Advance in C, C++,
+C#, Java, Python, Kotlin Programming</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Complex data structures, object-oriented design
+patterns, and enterprise-level project files.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-secondary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-secondary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="smart_toy">smart_toy</span>
+<div
+class="absolute top-4 left-4 bg-secondary text-on-secondary px-3 py-1 font-label text-[10px] font-bold uppercase tracking-widest z-10">
+Trending</div>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">PDF</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-secondary transition-colors">Prompt
+Engineering and Generative AI</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Mastering LLM communication, prompt structuring
+formulas, and GenAI integration strategies.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+<div
+class="bg-surface-container border border-outline-variant group hover:border-tertiary/50 transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span
+class="material-symbols-outlined text-5xl text-tertiary/80 group-hover:scale-110 transition-transform duration-500 z-10"
+data-icon="campaign">campaign</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="slideshow">slideshow</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">PPTX</span>
+</div>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 group-hover:text-tertiary transition-colors">Digital Marketing
+with AI</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">Leveraging AI tools for SEO optimization,
+automated content creation, and data-driven ad campaigns.</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+</div>
+</div>
+</section>
+<div id="view-modal-overlay" class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4"
+style="background:rgba(5,5,10,0.88);backdrop-filter:blur(10px)" onclick="if(event.target===this)closeViewModal()">
+<div id="view-modal"
+class="relative bg-surface-container border border-primary/40 rounded-2xl p-8 max-w-lg w-full shadow-[0_0_50px_rgba(255,45,120,0.2)] max-h-[90vh] overflow-y-auto">
+<button onclick="closeViewModal()"
+class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-all"><span
+class="material-symbols-outlined text-lg">close</span></button>
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary text-3xl"
+style='font-variation-settings:"FILL" 1'>menu_book</span>
+<span class="text-xs font-label text-secondary uppercase tracking-widest">Course Overview</span>
+</div>
+<h2 id="modal-title" class="text-xl font-headline font-bold text-on-surface mb-6 leading-snug"></h2>
+<ul id="modal-points" class="space-y-3 text-sm text-on-surface-variant font-body mb-8"></ul>
+<div class="flex gap-3">
+<a id="modal-download-btn" href="https://drive.google.com/drive/folders/1o9tRmU3TzO3xNyHZmnjjKP9YSt1RxGWF?usp=sharing" target="_blank"
+class="flex-1 py-3 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center rounded-lg">Download
+Materials</a>
+<button onclick="closeViewModal()"
+class="flex-1 py-3 border border-outline-variant text-on-surface-variant font-label text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary transition-all rounded-lg">Close</button>
+</div>
+</div>
+</div>
+<div id="unavailable-modal-overlay" class="hidden fixed inset-0 z-[1000] flex items-center justify-center p-4"
+style="background:rgba(5,5,10,0.88);backdrop-filter:blur(10px)" onclick="if(event.target===this)closeUnavailableModal()">
+<div id="unavailable-modal"
+class="relative bg-surface-container border border-primary/40 rounded-2xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(255,45,120,0.2)] text-center transform transition-all duration-300">
+<div class="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4 text-primary">
+<span class="material-symbols-outlined text-3xl">picture_as_pdf</span>
+</div>
+<h2 class="text-xl font-headline font-bold text-on-surface mb-2">PDF Not Available</h2>
+<p class="text-sm text-on-surface-variant font-body mb-6">Adding by admin soon.</p>
+<button onclick="closeUnavailableModal()"
+class="w-full py-3 bg-primary text-on-primary font-label text-xs font-bold uppercase tracking-widest hover:shadow-[0_0_15px_rgba(255,45,120,0.4)] transition-all rounded-lg">Okay</button>
+</div>
+</div>
+</main>
+<footer class="bg-background border-t border-secondary/30 py-12 px-6 md:px-12 lg:px-20">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="space-y-4">
+<div class="text-lg font-bold text-tertiary font-headline">SGCC</div>
+<p class="font-['Inter'] text-sm text-on-surface-variant leading-relaxed">
+Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.
+</p>
+<div class="flex gap-4 pt-2">
+<a href="https://earth.google.com/web/search/Church+Of+St%2e+Joseph+The+Worker,+B-9,+next+to+Cardinal+School,+Subhash+Nagar,+Bandra+East,+Mumbai,+Maharashtra+400051/@19.06669428,72.84752296,19.59091956a,200.35027466d,35y,0h,0t,0r/data=CuYBGrcBErABCiUweDNiZTdjOTFjNWM4Njc2Y2Q6MHg0YjI4MzNjNjBiMzQzNDQ4Gb_v37w4ETNAIeFDiZY8NlJAKnVDaHVyY2ggT2YgU3QuIEpvc2VwaCBUaGUgV29ya2VyLCBCLTksIG5leHQgdG8gQ2FyZGluYWwgU2Nob29sLCBTdWJoYXNoIE5hZ2FyLCBCYW5kcmEgRWFzdCwgTXVtYmFpLCBNYWhhcmFzaHRyYSA0MDAwNTEYASABIiYKJAnIj-MTxsY8QBEl9QGsOIYowBkDpLkCBR5VQCE-7ehzeEI8wEICCAE6AwoBMEICCABKDQj___________8BEAA?authuser=0" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-primary hover:border-primary hover:text-on-primary hover:shadow-[0_0_15px_rgba(255,26,107,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Location on Google Earth">
+<span class="material-symbols-outlined text-[20px]">public</span>
+</a>
+<a href="https://mail.google.com/mail/?view=cm&fs=1&to=sgccbandra@gmail.com" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-secondary hover:border-secondary hover:text-on-secondary hover:shadow-[0_0_15px_rgba(0,255,204,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Email Us">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</a>
+<a href="https://wa.me/918898919457" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:border-[#25D366] hover:text-white hover:shadow-[0_0_15px_rgba(37,211,102,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Chat on WhatsApp">
+<span class="material-symbols-outlined text-[20px]">call</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="courses.html">Courses</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="contact.html">Bandra East Campus</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block cursor-pointer" onclick="openFaqModal(event)">FAQ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Legal</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block"
+href="privacy.html">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block"
+href="terms.html">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Contact Us</h4>
+<p class="font-['Inter'] text-sm text-on-surface-variant mb-4">Church Of St. Joseph The Worker, B-9, next to Cardinal
+School, Subhash Nagar, Bandra East, Mumbai, Maharashtra 400051</p>
+<div class="bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+<p class="text-[10px] uppercase font-label text-on-surface-variant tracking-widest mb-1">Support Line</p>
+<p class="text-secondary font-headline font-bold">+91 88989 19457 / 82866 13019</p>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center">
+<p class="font-['Inter'] text-sm text-on-surface-variant">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.
+</p>
+</div>
+</footer>
+<button
+class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-on-primary rounded-full shadow-[0_0_20px_rgba(255,45,120,0.5)] flex items-center justify-center group active:scale-95 transition-all md:hidden">
+<span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform" data-icon="chat_bubble"
+style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+</button>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+<script type="module" defer src="./main.js"></script>
+<script>
+(async function syncMaterialsFromAdmin() {
+const JSONBIN_BIN_ID = '69fb633daaba8821977b7752';
+const JSONBIN_MASTER_KEY = '$2a$10$XurIdUSPSkFigbQpqqdNJOIXGaFBtwGIi9cUjCy/SUJNlB.WW9AdK';
+try {
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY }
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (data.record) {
+      if (data.record.courses && data.record.courses.length > 0) localStorage.setItem('sgcc_courses', JSON.stringify(data.record.courses));
+      if (data.record.materials && data.record.materials.length > 0) localStorage.setItem('sgcc_materials', JSON.stringify(data.record.materials));
+    }
+  }
+} catch(e) {}
+
+const DEFAULT_COURSES = [
+{ id:'c1', name:"MKCL'S MSCIT", category:"Certified Programs", duration:"6 Months", badge:"Premium", description:"Flagship digital literacy certification by MKCL. Essential computer skills for academic and professional success." },
+{ id:'c2', name:"Diploma in IT Hardware & Networking", category:"Hardware & Networking", duration:"1 Year", badge:"Practical", description:"Comprehensive training in PC assembly, troubleshooting, server management, and secure network infrastructure design." },
+{ id:'c3', name:"Web Designing & Web Development", category:"Programming", duration:"4 Months", badge:"Beginner to Pro", description:"Build dynamic, responsive web applications using modern HTML, CSS, JavaScript, and contemporary web frameworks." },
+{ id:'c4', name:"Graphic Designing", category:"Design & Creative", duration:"4 Months", badge:"Beginner", description:"Master industry-standard tools for visual communication, branding, typography, and stunning graphic creation." },
+{ id:'c5', name:"UI UX Designing", category:"Design & Creative", duration:"1 Year", badge:"Intermediate", description:"Design beautiful, user-centric interfaces. Master wireframing, prototyping, user research, and modern design systems." },
+{ id:'c6', name:"Basics of Computer", category:"Fundamentals", duration:"2 Months", badge:"Beginner", description:"Learn fundamental computer operations, OS usage, file management, and essential internet navigation skills." },
+{ id:'c7', name:"Computer Fundamentals", category:"Fundamentals", duration:"6 Months", badge:"Beginner", description:"Deep dive into computer architecture, system software usage, and core IT concepts for complete beginners." },
+{ id:'c8', name:"Office Automation", category:"Office Automation", duration:"1 Year", badge:"Corporate", description:"Master MS Word, Excel, PowerPoint, and modern office tools for workplace productivity and professional documentation." },
+{ id:'c9', name:"Financial Accounting with Tally ERP", category:"Finance", duration:"6 Months", badge:"Skill Based", description:"Advanced accounting, inventory management, and comprehensive financial reporting with professional GST filing." },
+{ id:'c10', name:"Marathi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"Master touch typing in Marathi using AI-driven methods. Achieve high speed and accuracy for professional exams." },
+{ id:'c11', name:"English and Hindi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"High-speed English and Hindi typing training with advanced AI techniques designed for government and corporate roles." },
+{ id:'c12', name:"Basics of C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"1 Year", badge:"Beginner", description:"Build a strong foundation in core programming concepts across multiple essential and modern development languages." },
+{ id:'c13', name:"Advance in C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"2 Years", badge:"Advanced", description:"Master advanced programming techniques, complex data structures, and robust enterprise-grade software development." },
+{ id:'c14', name:"Prompt Engineering and Generative AI", category:"AI & Future Skills", duration:"1 Year", badge:"Advanced", description:"Master LLMs, precision prompt crafting, and generative AI tools to automate workflows and enhance creative productivity." },
+{ id:'c15', name:"Digital Marketing with AI", category:"Marketing", duration:"5 Years", badge:"Strategy", description:"Dominate SEO, SMM, and dynamic content strategy utilizing cutting-edge AI-powered marketing tools for rapid brand growth." }
+];
+const storedCourses = localStorage.getItem('sgcc_courses');
+const storedMats = localStorage.getItem('sgcc_materials');
+const courses = storedCourses ? JSON.parse(storedCourses) : DEFAULT_COURSES;
+const materials = storedMats ? JSON.parse(storedMats) : [];
+const grid = document.querySelector('section.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
+if (!grid) return;
+const icons = ['desktop_windows', 'router', 'code', 'brush', 'layers', 'mouse', 'memory', 'print', 'account_balance', 'keyboard', 'keyboard', 'terminal', 'integration_instructions', 'smart_toy', 'campaign'];
+const colors = ['primary', 'secondary', 'tertiary', 'primary', 'secondary', 'tertiary', 'primary', 'secondary', 'tertiary', 'primary', 'secondary', 'tertiary', 'primary', 'secondary', 'tertiary'];
+const matIcons = ['picture_as_pdf', 'description', 'slideshow', 'picture_as_pdf', 'picture_as_pdf', 'description', 'picture_as_pdf', 'folder_zip', 'picture_as_pdf', 'description', 'folder_zip', 'picture_as_pdf', 'folder_zip', 'picture_as_pdf', 'slideshow'];
+const activeCourses = courses;
+grid.innerHTML = activeCourses.map((c) => {
+const i = courses.findIndex(x => x.id === c.id);
+const mat = materials.find(m => m.courseId === c.id) || {};
+const col = colors[i % 3] || 'primary';
+const iconEl = icons[i % icons.length] || 'school';
+const matIcon = matIcons[i % matIcons.length] || 'picture_as_pdf';
+const matIconColor = col === 'primary' ? 'text-error' : col === 'secondary' ? 'text-tertiary' : 'text-primary';
+const colClass = col === 'primary' ? 'text-primary/80' : col === 'secondary' ? 'text-secondary/80' : 'text-tertiary/80';
+const hoverBorder = col === 'primary' ? 'hover:border-primary/50' : col === 'secondary' ? 'hover:border-secondary/50' : 'hover:border-tertiary/50';
+const hoverH3 = col === 'primary' ? 'group-hover:text-primary' : col === 'secondary' ? 'group-hover:text-secondary' : 'group-hover:text-tertiary';
+let viewUrl = mat.viewUrl;
+// fallback for older records
+if (!viewUrl && mat.url) viewUrl = mat.url;
+if (!viewUrl) viewUrl = '#';
+let downloadUrl = mat.downloadUrl || '#';
+if (downloadUrl !== '#') {
+const driveMatch = downloadUrl.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+if (driveMatch && driveMatch[1]) {
+downloadUrl = `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
+}
+}
+const escapedName = c.name.replace(/"/g, "&quot;");
+const viewAction = viewUrl === '#'
+? `data-name="${escapedName}" data-dl="${downloadUrl}" onclick="event.preventDefault(); openViewModal(this.getAttribute('data-name'), this.getAttribute('data-dl'));" href="#"`
+: `href="${viewUrl}" target="_blank"`;
+const downloadAction = downloadUrl === '#'
+? `onclick="event.preventDefault(); openUnavailableModal();" href="#"`
+: `href="${downloadUrl}" target="_blank" download`;
+return `<div class="bg-surface-container border border-outline-variant group ${hoverBorder} transition-all duration-500 overflow-hidden flex flex-col h-full">
+<div class="h-32 tech-pattern relative flex items-center justify-center bg-surface-container-highest">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+<span class="material-symbols-outlined text-5xl ${colClass} group-hover:scale-110 transition-transform duration-500 z-10">${iconEl}</span>
+</div>
+<div class="p-6 flex-grow">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined ${matIconColor}">${matIcon}</span>
+<span class="font-label text-xs text-on-surface-variant uppercase tracking-wider">${mat.type || 'PDF'}</span>
+</div>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:13px">schedule</span>${c.duration}</span>
+</div>
+<h3 class="font-headline font-bold text-xl mb-2 ${hoverH3} transition-colors">${c.name}</h3>
+<p class="text-sm text-on-surface-variant mb-6 line-clamp-2">${c.description || ''}</p>
+</div>
+<div class="p-6 pt-0 mt-auto flex gap-3">
+<a ${viewAction} class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center cursor-pointer flex items-center justify-center">View</a>
+<a ${downloadAction} class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center cursor-pointer flex items-center justify-center">Download</a>
+</div>
+</div>`;
+}).join('');
+})();
+</script>
+<script>
+const DRIVE_URL = 'https://drive.google.com/drive/folders/1o9tRmU3TzO3xNyHZmnjjKP9YSt1RxGWF?usp=sharing';
+const COURSE_DESC = {
+"MKCL'S MSCIT": ["Government-recognized digital literacy certification by MKCL, Maharashtra", "Covers MS Office (Word, Excel, PowerPoint), Internet & Email", "Practical lab sessions with real-world assignments and mock exams", "Mandatory qualification for many Maharashtra Government job applications", "Examination conducted at authorized MKCL centers with official certification"],
+"Diploma in IT Hardware & Networking": ["PC assembly, disassembly and hands-on hardware component identification", "System troubleshooting, BIOS configuration and OS installation", "Network topologies, IP addressing, subnetting and cabling", "Server setup, router/switch configuration and network security basics", "Preparation for CompTIA A+ and Network+ entry-level certifications"],
+"Web Designing & Web Development": ["HTML5 semantics, CSS3 animations and responsive Flexbox/Grid layouts", "JavaScript ES6+, DOM manipulation and asynchronous programming", "Frontend frameworks: React.js fundamentals and component architecture", "Backend basics with Node.js, Express and REST API development", "Deployment workflows using Git, GitHub and cloud hosting platforms"],
+"Graphic Designing": ["Principles of visual design: color theory, typography and composition", "Adobe Photoshop for photo editing, retouching and digital art", "Adobe Illustrator for vector graphics, logos and branding assets", "Layout design for print media: brochures, posters and packaging", "Building a professional design portfolio for freelance and agency roles"],
+"UI UX Designing": ["User research methods: interviews, surveys and usability testing", "Information architecture, user flows and wireframing techniques", "High-fidelity prototyping and interactive design with Figma", "Design systems, component libraries and accessibility standards", "Portfolio-ready case studies covering end-to-end UX processes"],
+"Basics of Computer": ["Understanding hardware: CPU, RAM, storage, input and output devices", "Operating system navigation: Windows file management and settings", "Internet browsing, email etiquette and safe online practices", "Introduction to typing skills and keyboard shortcuts for productivity", "Basic troubleshooting for common computer issues"],
+"Computer Fundamentals": ["Computer architecture: ALU, control unit, memory hierarchy explained", "Types of software: system software, application software and utilities", "Number systems: binary, octal, decimal and hexadecimal conversions", "Data representation, encoding standards (ASCII, Unicode) and storage units", "History of computing and generations of computers"],
+"Office Automation": ["Microsoft Word: formatting, mail merge, tables and document templates", "Microsoft Excel: formulas, pivot tables, charts and data validation", "Microsoft PowerPoint: slide design, animations and presentation skills", "Email management with Outlook: scheduling, contacts and calendars", "Productivity tools: Google Workspace, OneDrive and collaborative workflows"],
+"Financial Accounting with Tally ERP": ["Fundamentals of accountancy: journal entries, ledgers and trial balance", "Tally ERP 9 / Tally Prime setup: company creation and voucher entry", "GST configuration, filing returns and generating e-way bills in Tally", "Inventory management: stock items, godowns and purchase/sales orders", "Payroll processing, bank reconciliation and MIS reports generation"],
+"Marathi Typing with Advanced Methods and AI": ["Marathi keyboard layouts: Inscript and Phonetic methods", "Touch typing drills to build speed from 20 to 60+ WPM in Marathi", "AI-assisted accuracy tools and auto-correction techniques", "Preparation for Maharashtra government typing speed examinations", "Practical exercises with official documents and government letter formats"],
+"English and Hindi Typing with Advanced Methods and AI": ["English QWERTY touch typing from beginner to 50+ WPM", "Hindi Inscript and Remington keyboard layout mastery", "AI-powered real-time feedback for speed and accuracy improvement", "Preparation for SSC, IBPS and State Government typing tests", "Corporate document typing: letters, memos and report formatting"],
+"Basics of C, C++, C#, Java, Python, Kotlin Programming": ["Core programming concepts: variables, data types, operators and I/O", "Control structures: if-else, switch, loops and nested logic", "Functions, recursion and modular programming practices", "Introduction to Object-Oriented Programming: classes and objects", "Basic algorithms: sorting, searching and complexity introduction"],
+"Advance in C, C++, C#, Java, Python, Kotlin Programming": ["Advanced OOP: inheritance, polymorphism, abstraction and interfaces", "Data structures: linked lists, stacks, queues, trees and graphs", "Design patterns: Singleton, Factory, Observer and MVC architecture", "File I/O, exception handling and multi-threading concepts", "Enterprise-level project development and code review practices"],
+"Prompt Engineering and Generative AI": ["Understanding LLMs: GPT, Gemini, Claude and their capabilities", "Prompt crafting techniques: zero-shot, few-shot and chain-of-thought", "AI tools for productivity: ChatGPT, Midjourney, DALL-E and Copilot", "Automating workflows using AI APIs and no-code AI integrations", "Ethical AI use, hallucination mitigation and responsible prompting"],
+"Digital Marketing with AI": ["SEO fundamentals: keyword research, on-page and off-page optimization", "Social Media Marketing: content strategy for Instagram, LinkedIn and YouTube", "Google Ads and Meta Ads: campaign setup, targeting and A/B testing", "AI-powered content creation: blogs, captions and ad copy automation", "Analytics dashboards: Google Analytics 4, Search Console and conversion tracking"]
+};
+function openViewModal(name, downloadUrl) {
+const pts = COURSE_DESC[name] || ["Comprehensive study material covering all key topics", "Practical exercises and real-world examples included", "Expert-curated content updated for current industry standards", "Access all materials via the Download button below"];
+document.getElementById('modal-title').textContent = name;
+document.getElementById('modal-points').innerHTML = pts.map(p => `<li class="flex gap-2 items-start"><span class="text-secondary shrink-0 mt-0.5">✦</span><span>${p}</span></li>`).join('');
+const downloadBtn = document.getElementById('modal-download-btn');
+if (!downloadUrl || downloadUrl === '#') {
+downloadBtn.style.display = '';
+downloadBtn.href = '#';
+downloadBtn.removeAttribute('target');
+downloadBtn.onclick = (e) => { e.preventDefault(); closeViewModal(); openUnavailableModal(); };
+} else {
+downloadBtn.style.display = '';
+downloadBtn.href = downloadUrl;
+downloadBtn.target = '_blank';
+downloadBtn.onclick = null;
+}
+document.getElementById('view-modal-overlay').classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+}
+function closeViewModal() {
+document.getElementById('view-modal-overlay').classList.add('hidden');
+document.body.style.overflow = '';
+}
+function openUnavailableModal() {
+document.getElementById('unavailable-modal-overlay').classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+}
+function closeUnavailableModal() {
+document.getElementById('unavailable-modal-overlay').classList.add('hidden');
+document.body.style.overflow = '';
+}
+document.addEventListener('DOMContentLoaded', () => {
+const searchInput = document.getElementById('search-input');
+// Need to wait slightly if the dynamic script overwrites the grid, or we just rely on event bubbling/querying inside the listener
+const grid = document.querySelector('section.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3') || document.querySelector('section.grid');
+if (searchInput && grid) {
+searchInput.addEventListener('input', (e) => {
+const term = e.target.value.toLowerCase();
+// Cards have the class 'group' and are direct children of the grid
+const cards = grid.children;
+Array.from(cards).forEach(card => {
+// Skip if it's the "No study materials" message
+if (card.classList.contains('col-span-full')) return;
+const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
+if (title.includes(term) || desc.includes(term)) {
+card.style.display = '';
+} else {
+card.style.display = 'none';
+}
+});
+});
+}
+});
+</script>
+
+<!-- FAQ Modal -->
+<div id="faq-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+  <div class="bg-surface-container glass-card p-6 md:p-10 rounded-2xl max-w-2xl w-full mx-4 border border-outline/30 relative max-h-[85vh] overflow-y-auto">
+    <button onclick="closeFaqModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
+    <h3 class="text-3xl font-headline font-bold text-on-surface mb-6 flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary text-4xl">live_help</span>
+      Frequently Asked Questions
+    </h3>
+    <div class="space-y-4">
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          What courses do you offer?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We offer a wide range of courses including MS-CIT, Tally Prime, Web Development, Graphic Design, Python, Advanced Programming, and Digital Marketing.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Where is the campus located?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We are located at B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai. It's a quick 2-minute walk from Bandra Colony metro station!
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          How do I enroll in a course?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          You can enroll by visiting our Bandra East campus in person, or by filling out the online Enquiry form. Our staff will guide you through the process.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Are your classrooms air-conditioned?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Yes, we provide fully air-conditioned modern computer labs to ensure a comfortable and productive learning environment for all students.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Do you provide certificates?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Absolutely! Upon successful completion of your course and relevant exams, you will receive an industry-recognized certificate (e.g., from MKCL for MS-CIT).
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+</body>
+</html>

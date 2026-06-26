@@ -1,0 +1,205 @@
+<link rel="stylesheet" crossorigin href="/assets/style-ChDKmW2p.css">
+<!-- ═══════════════════════════════════════════════════════
+     chatbot.html — SGCC AI Chatbot Widget (HTML Fragment)
+
+     NOTE: This is NOT a standalone page. It is an HTML fragment
+     that represents the floating chatbot widget.
+
+     It consists of two parts:
+       1. FAB (Floating Action Button) — the round 'AI' button
+          visible at the bottom-right of the screen, used to
+          open/close the chat window.
+       2. Chat Window — the slide-up panel with message history,
+          user input, and AI responses (powered by Gemini via
+          the OpenRouter API).
+
+     The full chatbot code including the <script> with the API
+     integration lives inside index.html where this widget is
+     directly embedded.
+     ═══════════════════════════════════════════════════════ -->
+<!-- ── Load custom styles (needs to be first if used standalone) ── -->
+<div class="fixed top-28 right-8 z-50 flex flex-col items-end gap-3">
+<button id="fab-chat-btn" aria-label="Open AI Chat">
+<span id="fab-icon" class="material-symbols-outlined text-white text-2xl"
+style='font-variation-settings:"FILL" 1'>smart_toy</span>
+<span class="notif-dot"></span>
+</button>
+<div id="sgcc-chat-window" class="hidden-chat">
+<div class="flex items-center gap-3 px-4 py-3 border-b border-primary/30"
+style="background:var(--color-surface-container-high)">
+<div
+class="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined text-lg"
+style='font-variation-settings:"FILL" 1'>smart_toy</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold font-headline text-inverse-surface" style="line-height:1.2">SGCC Assistant</p>
+<p class="text-[10px] text-secondary flex items-center gap-1"><span
+class="w-1.5 h-1.5 rounded-full bg-[var(--color-secondary)] inline-block animate-pulse"></span>Online</p>
+</div>
+    <button id="chat-close-btn" class="text-outline hover:text-primary transition-colors"
+        aria-label="Close chat">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div id="chat-messages">
+</div>
+<div class="flex items-center gap-2 px-3 py-3 border-t border-primary/30"
+style="background:var(--color-surface-container-lowest)">
+<input id="chat-input" type="text" placeholder="Ask about courses, fees, timings…" maxlength="400" />
+<button id="chat-send-btn" aria-label="Send">
+<span class="material-symbols-outlined text-base">send</span>
+</button>
+</div>
+<p class="text-center text-[10px] text-outline pb-2">Powered by Gemini AI · SGCC</p>
+</div>
+</div>
+<script>
+(function () {
+const SGCC_CONTEXT = `You are the SGCC Assistant, a super friendly, warm, and highly knowledgeable human-like chatbot for Shree Ganesh Computer Classes (SGCC). 
+Your goal is to provide helpful, conversational, and accurate information to visitors. Be welcoming, use emojis appropriately, and speak naturally like a helpful receptionist.
+Here is all the information about our institute and web pages:
+- **Location:** Church Of St. Joseph The Worker, B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai, Maharashtra 400051. (2-minute walk from Bandra East station).
+- **Contact Info:** Phone: +91 88989 19457 / +91 82866 13019. Email: sgccbandra@gmail.com.
+- **Visiting Hours:** Mon-Fri 8:00 AM - 8:00 PM, Saturday 10:00 AM - 6:00 PM, Sunday Closed.
+- **About SGCC:** We have 25+ years of excellence and 15k+ certified alumni. We are an MKCL Authorized partner and a YCMOU Center. We offer Expert Mentorship, a Modern Curriculum updated bi-annually, and Placement Ready training.
+- **Courses Offered:** 
+1. Flagship: MKCL's MS-CIT Mastery Program (Govt. recognized, hands-on lab training).
+2. Programming: Basics & Advance Programming (C, C++, C#, Java, Python, Kotlin).
+3. Design & Web: Web Designing & Web Development, Graphic Designing, UI/UX Designing.
+4. Advanced Tech: Prompt Engineering & Generative AI, Digital Marketing with AI.
+5. Fundamentals: Basics of Computer, Computer Fundamentals, Office Automation.
+6. Accounts & Typing: Financial Accounting with Tally ERP, Marathi/English/Hindi Typing with Advanced Methods and AI.
+7. Hardware: Diploma in IT Hardware & Networking.
+- **Study Material Page:** Students can access our exclusive repository of free study materials, coding cheat sheets, and MSCIT practice modules. No registration is required.
+- **Admissions:** Admissions are OPEN for 2026-2027. Visitors can enroll or enquire via the 'Enquire Now' buttons on our website.
+Always respond in a concise, friendly manner. If you don't know the answer, politely ask them to call or email us.`;
+const chatWindow = document.getElementById('sgcc-chat-window');
+const fabBtn = document.getElementById('fab-chat-btn');
+const closeBtn = document.getElementById('chat-close-btn');
+const messagesDiv = document.getElementById('chat-messages');
+const input = document.getElementById('chat-input');
+const sendBtn = document.getElementById('chat-send-btn');
+const fabIcon = document.getElementById('fab-icon');
+let isOpen = false;
+let history = []; // Stores messages as {role: 'user'|'assistant', content: string}
+function openChat() {
+if (!chatWindow) return;
+chatWindow.classList.remove('hidden-chat');
+if (fabIcon) fabIcon.textContent = 'close';
+isOpen = true;
+input && input.focus();
+const dot = fabBtn?.querySelector('.notif-dot');
+if (dot) dot.remove();
+}
+function closeChat() {
+if (!chatWindow) return;
+chatWindow.classList.add('hidden-chat');
+if (fabIcon) fabIcon.textContent = 'smart_toy';
+isOpen = false;
+}
+if (fabBtn) fabBtn.addEventListener('click', () => isOpen ? closeChat() : openChat());
+if (closeBtn) closeBtn.addEventListener('click', closeChat);
+function appendBubble(text, role) {
+if (!messagesDiv) return;
+const div = document.createElement('div');
+div.className = 'chat-bubble ' + (role === 'user' ? 'bubble-user' : 'bubble-bot');
+let formattedText = text
+.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+.replace(/\*(.*?)\*/g, '<em>$1</em>')
+.replace(/\n/g, '<br/>');
+div.innerHTML = formattedText;
+if (qrDiv && qrDiv.parentNode === messagesDiv) {
+messagesDiv.insertBefore(div, qrDiv);
+} else {
+messagesDiv.appendChild(div);
+}
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
+return div;
+}
+function appendTyping() {
+if (!messagesDiv) return;
+const div = document.createElement('div');
+div.className = 'chat-bubble bubble-bot typing-dots';
+div.innerHTML = '<span></span><span></span><span></span>';
+if (qrDiv && qrDiv.parentNode === messagesDiv) {
+messagesDiv.insertBefore(div, qrDiv);
+} else {
+messagesDiv.appendChild(div);
+}
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
+return div;
+}
+// Initialize welcome message
+appendBubble("👋 Hi! I'm the SGCC Assistant. Ask me anything about our courses, timings, admissions, or location!", 'bot');
+// Quick replies logic
+const quickReplies = ['Courses offered', 'Admission process', 'Location & timings', 'MS-CIT details'];
+var qrDiv = document.createElement('div');
+qrDiv.className = 'flex flex-wrap gap-2 px-1 mb-2';
+quickReplies.forEach(q => {
+const btn = document.createElement('button');
+btn.textContent = q;
+btn.className = 'text-xs px-3 py-1.5 rounded-full border border-primary/40 text-primary hover:bg-primary/30 transition-colors';
+btn.onclick = () => sendMessage(q);
+qrDiv.appendChild(btn);
+});
+if (messagesDiv) messagesDiv.appendChild(qrDiv);
+async function sendMessage(text) {
+const messageText = (text || (input ? input.value : '')).trim();
+if (!messageText) return;
+if (input) input.value = '';
+if (sendBtn) sendBtn.disabled = true;
+appendBubble(messageText, 'user');
+history.push({ role: 'user', content: messageText });
+const typingEl = appendTyping();
+try {
+const API_KEY = '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';
+const url = 'https://openrouter.ai/api/v1/chat/completions';
+const res = await fetch(url, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'Authorization': `Bearer ${API_KEY}`,
+'HTTP-Referer': window.location.origin,
+'X-Title': 'SGCC Assistant'
+},
+body: JSON.stringify({
+model: 'google/gemini-2.0-flash-001',
+messages: [
+{ role: 'system', content: SGCC_CONTEXT },
+...history
+]
+})
+});
+const data = await res.json();
+if (!res.ok) throw new Error(data.error?.message || 'API request failed');
+const reply = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that.";
+if (typingEl) typingEl.remove();
+appendBubble(reply, 'assistant');
+history.push({ role: 'assistant', content: reply });
+} catch (err) {
+if (typingEl) typingEl.remove();
+const fallback = getFallbackReply(messageText.toLowerCase());
+appendBubble(fallback, 'assistant');
+console.error('Chatbot error:', err);
+} finally {
+if (sendBtn) sendBtn.disabled = false;
+if (input) input.focus();
+}
+}
+function getFallbackReply(q) {
+if (q.includes('ms-cit') || q.includes('mscit')) return '📋 <b>MS-CIT</b> is a Govt. recognized 3-month digital literacy course by MKCL. It covers computer basics, MS Office, and more. You can view the study guide here: <a href="https://drive.google.com/file/d/1bG0Tx7l3jhifUbZkrokqcD-HPujKky_d/view" target="_blank" class="text-secondary underline">View Material</a>';
+if (q.includes('course')) return '📚 We offer 15+ courses: MS-CIT, Web Dev, Graphic Design, UI/UX, Tally, Python, and AI!';
+if (q.includes('fee') || q.includes('cost')) return '💳 Fees vary by course. Please call <b>+91 88989 19457 / 82866 13019</b> or visit our Bandra East campus.';
+if (q.includes('location') || q.includes('address')) return '📍 We are at <b>Church Of St. Joseph The Worker, B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai</b>, Maharashtra 400051.';
+if (q.includes('timing')) return '⏰ We have morning and evening batches. Call us for details!';
+return "I'm here to help with info about SGCC courses, location, and admissions! You can also reach us at +91 88989 19457 / 82866 13019.";
+}
+if (input) {
+input.addEventListener('keydown', e => {
+if (e.key === 'Enter' && !sendBtn.disabled) sendMessage();
+});
+}
+if (sendBtn) sendBtn.addEventListener('click', () => sendMessage());
+})();
+</script>

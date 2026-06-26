@@ -1,0 +1,530 @@
+<!DOCTYPE html><!-- ═══════════════════════════════════════════════════════
+     SGCC — Courses Page
+     Displays all 15 courses in a filterable, animated card grid.
+     Courses are either static HTML or dynamically rendered from
+     localStorage (sgcc_courses) if the admin has made changes.
+     The 'syncCoursesFromAdmin()' IIFE at the bottom handles that sync.
+     ═══════════════════════════════════════════════════════ -->
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>SGCC – Shree Ganesh Computer Classes | Future Skills</title>
+<meta name="description" content="Shree Ganesh Computer Classes (SGCC) - Empowering Mumbai since 2004. Offering expert training in MS-CIT, Web Development, UI/UX, Programming, Tally, and AI technologies.">
+<meta name="keywords" content="Computer classes in Bandra, MS-CIT course Mumbai, Web Development course, UI UX Design classes, Programming courses, Tally classes Mumbai, SGCC, AI and Digital Marketing">
+<meta property="og:title" content="SGCC - Shree Ganesh Computer Classes">
+<meta property="og:description" content="Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SGCC - Shree Ganesh Computer Classes">
+<meta name="twitter:description" content="Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://lh3.googleusercontent.com">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="./tailwind-config.js"></script>
+<link rel="stylesheet" href="./style.css" />
+<style>
+html {
+scroll-behavior: smooth;
+}*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}[type='text'],input:where(:not([type])),[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select{-webkit-appearance:none;appearance:none;background-color:#fff;border-color:#6b7280;border-width:1px;border-radius:0px;padding-top:0.5rem;padding-right:0.75rem;padding-bottom:0.5rem;padding-left:0.75rem;font-size:1rem;line-height:1.5rem;--tw-shadow:0 0 #0000;}[type='text']:focus, input:where(:not([type])):focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-inset:var(--tw-empty,/*!*/ /*!*/);--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);border-color:#2563eb}input::placeholder,textarea::placeholder{color:#6b7280;opacity:1}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-date-and-time-value{min-height:1.5em;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field{padding-top:0;padding-bottom:0}select{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right 0.5rem center;background-repeat:no-repeat;background-size:1.5em 1.5em;padding-right:2.5rem;print-color-adjust:exact}[multiple],[size]:where(select:not([size="1"])){background-image:initial;background-position:initial;background-repeat:unset;background-size:initial;padding-right:0.75rem;print-color-adjust:unset}[type='checkbox'],[type='radio']{-webkit-appearance:none;appearance:none;padding:0;print-color-adjust:exact;display:inline-block;vertical-align:middle;background-origin:border-box;-webkit-user-select:none;user-select:none;flex-shrink:0;height:1rem;width:1rem;color:#2563eb;background-color:#fff;border-color:#6b7280;border-width:1px;--tw-shadow:0 0 #0000}[type='checkbox']{border-radius:0px}[type='radio']{border-radius:100%}[type='checkbox']:focus,[type='radio']:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-inset:var(--tw-empty,/*!*/ /*!*/);--tw-ring-offset-width:2px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}[type='checkbox']:checked,[type='radio']:checked{border-color:transparent;background-color:currentColor;background-size:100% 100%;background-position:center;background-repeat:no-repeat}[type='checkbox']:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");}@media (forced-colors: active) {[type='checkbox']:checked{-webkit-appearance:auto;appearance:auto}}[type='radio']:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");}@media (forced-colors: active) {[type='radio']:checked{-webkit-appearance:auto;appearance:auto}}[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus{border-color:transparent;background-color:currentColor}[type='checkbox']:indeterminate{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");border-color:transparent;background-color:currentColor;background-size:100% 100%;background-position:center;background-repeat:no-repeat;}@media (forced-colors: active) {[type='checkbox']:indeterminate{-webkit-appearance:auto;appearance:auto}}[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus{border-color:transparent;background-color:currentColor}[type='file']{background:unset;border-color:inherit;border-width:0;border-radius:0;padding:0;font-size:unset;line-height:inherit}[type='file']:focus{outline:1px solid ButtonText;outline:1px auto -webkit-focus-ring-color}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.top-0{top:0px}.top-20{top:5rem}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.col-span-1{grid-column:span 1 / span 1}.mx-auto{margin-left:auto;margin-right:auto}.mb-10{margin-bottom:2.5rem}.mb-12{margin-bottom:3rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mt-12{margin-top:3rem}.mt-24{margin-top:6rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.min-h-\[1024px\]{min-height:1024px}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-7xl{max-width:80rem}.max-w-screen-2xl{max-width:1536px}.max-w-xl{max-width:36rem}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded-full{border-radius:0.75rem}.rounded-lg{border-radius:0.25rem}.rounded-l{border-top-left-radius:0.125rem;border-bottom-left-radius:0.125rem}.rounded-r{border-top-right-radius:0.125rem;border-bottom-right-radius:0.125rem}.border{border-width:1px}.border-2{border-width:2px}.border-y{border-top-width:1px;border-bottom-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-t{border-top-width:1px}.border-\[\var(--color-secondary)\]{--tw-border-opacity:1;border-color:rgb(0 255 204 / var(--tw-border-opacity, 1))}.border-\[\var(--color-secondary)\]\/30{border-color:rgb(0 255 204 / 0.2)}.border-\[\var(--color-primary)\]\/30{border-color:rgb(255 45 120 / 0.3)}.border-outline-variant{--tw-border-opacity:1;border-color:rgb(48 40 64 / var(--tw-border-opacity, 1))}.border-outline-variant\/30{border-color:rgb(48 40 64 / 0.3)}.border-primary{--tw-border-opacity:1;border-color:rgb(255 45 120 / var(--tw-border-opacity, 1))}.border-secondary{--tw-border-opacity:1;border-color:rgb(0 255 204 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.bg-\[\#05050A\]{--tw-bg-opacity:1;background-color:rgb(10 10 18 / var(--tw-bg-opacity, 1))}.bg-\[\#05050A\]\/80{background-color:rgb(10 10 18 / 0.8)}.bg-background{--tw-bg-opacity:1;background-color:rgb(10 10 18 / var(--tw-bg-opacity, 1))}.bg-background\/95{background-color:rgb(10 10 18 / 0.95)}.bg-primary{--tw-bg-opacity:1;background-color:rgb(255 45 120 / var(--tw-bg-opacity, 1))}.bg-primary-container{--tw-bg-opacity:1;background-color:rgb(179 0 78 / var(--tw-bg-opacity, 1))}.bg-primary\/30{background-color:rgb(255 45 120 / 0.1)}.bg-primary\/5{background-color:rgb(255 45 120 / 0.05)}.bg-secondary-container{--tw-bg-opacity:1;background-color:rgb(0 77 61 / var(--tw-bg-opacity, 1))}.bg-secondary\/30{background-color:rgb(0 255 204 / 0.1)}.bg-surface{--tw-bg-opacity:1;background-color:rgb(15 15 26 / var(--tw-bg-opacity, 1))}.bg-surface-container{--tw-bg-opacity:1;background-color:rgb(20 20 34 / var(--tw-bg-opacity, 1))}.bg-tertiary-container{--tw-bg-opacity:1;background-color:rgb(102 82 0 / var(--tw-bg-opacity, 1))}.bg-tertiary\/30{background-color:rgb(255 224 74 / 0.1)}.bg-transparent{background-color:transparent}.p-12{padding:3rem}.p-3{padding:0.75rem}.p-6{padding:1.5rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-12{padding-left:3rem;padding-right:3rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-1{padding-bottom:0.25rem}.pb-20{padding-bottom:5rem}.pt-24{padding-top:6rem}.pt-8{padding-top:2rem}.text-center{text-align:center}.font-\[\'Inter\'\]{font-family:'Inter'}.font-body{font-family:Inter}.font-headline{font-family:Sora}.font-label{font-family:Space Grotesk}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-6xl{font-size:3.75rem;line-height:1}.text-\[10px\]{font-size:10px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-tight{letter-spacing:-0.025em}.tracking-tighter{letter-spacing:-0.05em}.tracking-widest{letter-spacing:0.1em}.text-\[\var(--color-secondary)\]{--tw-text-opacity:1;color:rgb(0 255 204 / var(--tw-text-opacity, 1))}.text-\[\#ffe04a\]{--tw-text-opacity:1;color:rgb(255 224 74 / var(--tw-text-opacity, 1))}.text-on-background{--tw-text-opacity:1;color:rgb(232 224 240 / var(--tw-text-opacity, 1))}.text-on-primary{--tw-text-opacity:1;color:rgb(26 0 16 / var(--tw-text-opacity, 1))}.text-on-primary-container{--tw-text-opacity:1;color:rgb(255 224 236 / var(--tw-text-opacity, 1))}.text-on-secondary-container{--tw-text-opacity:1;color:rgb(192 255 244 / var(--tw-text-opacity, 1))}.text-on-surface{--tw-text-opacity:1;color:rgb(232 224 240 / var(--tw-text-opacity, 1))}.text-on-surface-variant{--tw-text-opacity:1;color:rgb(160 152 176 / var(--tw-text-opacity, 1))}.text-on-tertiary-container{--tw-text-opacity:1;color:rgb(255 240 192 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(255 45 120 / var(--tw-text-opacity, 1))}.text-secondary{--tw-text-opacity:1;color:rgb(0 255 204 / var(--tw-text-opacity, 1))}.text-on-surface-variant{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-on-surface-variant{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-on-surface-variant{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-tertiary{--tw-text-opacity:1;color:rgb(255 224 74 / var(--tw-text-opacity, 1))}.opacity-30{opacity:0.3}.shadow-\[0_0_10px_rgba\(255\2c 224\2c 74\2c 0\.4\)\]{--tw-shadow:0 0 10px rgba(255,224,74,0.4);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(255\2c 45\2c 120\2c 0\.2\)\]{--tw-shadow:0 0 10px rgba(255,45,120,0.2);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_4_20px_rgba\(0\2c 0\2c 0\2c 0\.5\)\]{--tw-shadow:0 4 20px rgba(0,0,0,0.5);--tw-shadow-colored:0 4 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.drop-shadow-\[0_0_8px_rgba\(255\2c 224\2c 74\2c 0\.6\)\]{--tw-drop-shadow:drop-shadow(0 0 8px rgba(255,224,74,0.6));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.ease-out{transition-timing-function:cubic-bezier(0, 0, 0.2, 1)}.selection\:bg-primary\/30 *::selection{background-color:rgb(255 45 120 / 0.3)}.selection\:text-primary *::selection{--tw-text-opacity:1;color:rgb(255 45 120 / var(--tw-text-opacity, 1))}.selection\:bg-primary\/30::selection{background-color:rgb(255 45 120 / 0.3)}.selection\:text-primary::selection{--tw-text-opacity:1;color:rgb(255 45 120 / var(--tw-text-opacity, 1))}.hover\:translate-x-1:hover{--tw-translate-x:0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-secondary:hover{--tw-border-opacity:1;border-color:rgb(0 255 204 / var(--tw-border-opacity, 1))}.hover\:bg-\[\var(--color-primary)\]\/30:hover{background-color:rgb(255 45 120 / 0.1)}.hover\:bg-primary:hover{--tw-bg-opacity:1;background-color:rgb(255 45 120 / var(--tw-bg-opacity, 1))}.hover\:bg-secondary\/30:hover{background-color:rgb(0 255 204 / 0.1)}.hover\:bg-surface-container-high:hover{--tw-bg-opacity:1;background-color:rgb(30 30 48 / var(--tw-bg-opacity, 1))}.hover\:text-\[\var(--color-secondary)\]:hover{--tw-text-opacity:1;color:rgb(0 255 204 / var(--tw-text-opacity, 1))}.hover\:text-\[\var(--color-primary)\]:hover{--tw-text-opacity:1;color:rgb(255 45 120 / var(--tw-text-opacity, 1))}.hover\:text-on-primary:hover{--tw-text-opacity:1;color:rgb(26 0 16 / var(--tw-text-opacity, 1))}.hover\:text-secondary:hover{--tw-text-opacity:1;color:rgb(0 255 204 / var(--tw-text-opacity, 1))}.hover\:shadow-\[0_0_15px_rgba\(255\2c 45\2c 120\2c 0\.3\)\]:hover{--tw-shadow:0 0 15px rgba(255,45,120,0.3);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:brightness-110:hover{--tw-brightness:brightness(1.1);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.focus\:border-primary:focus{--tw-border-opacity:1;border-color:rgb(255 45 120 / var(--tw-border-opacity, 1))}.focus\:ring-0:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:text-primary{--tw-text-opacity:1;color:rgb(255 45 120 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-secondary{--tw-text-opacity:1;color:rgb(0 255 204 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-tertiary{--tw-text-opacity:1;color:rgb(255 224 74 / var(--tw-text-opacity, 1))}@media (min-width: 768px){.md\:col-span-1{grid-column:span 1 / span 1}.md\:flex{display:flex}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:text-8xl{font-size:6rem;line-height:1}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style>    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="./theme.js"></script>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 selection:text-primary" data-mode="connect">
+<nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_4_20px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-center px-6 md:px-12 lg:px-20 py-4 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-3">
+<img src="./logo.png?v=5" fetchpriority="high" alt="SGCC Logo" class="h-14 w-14 xl:h-16 xl:w-16 object-cover rounded-2xl drop-shadow-[0_0_12px_rgba(99,102,241,0.5)] shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-indigo-400/20 hover:border-indigo-400/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:scale-105 transition-all duration-300">
+<div class="flex flex-col leading-tight mr-8">
+<span class="text-xl sm:text-2xl md:text-3xl font-headline font-extrabold tracking-tight" style="background: linear-gradient(90deg, #ffe04a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SGCC</span>
+<span class="text-[11px] sm:text-xs md:text-sm font-label font-semibold tracking-wider text-on-surface-variant uppercase mt-1 hidden sm:block">Shree Ganesh Computer Classes</span>
+</div>
+<div class="hidden md:flex gap-6 items-center"><a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/index.html">Home</a>
+<a class="nav-link text-secondary border-secondary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/courses.html">Courses</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/study-material.html">Study Material</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/about.html">About Us</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/contact.html">Contact Us</a></div>
+</div>
+<div class="flex items-center gap-6">
+<button id="theme-toggle" class="theme-toggle-pill" aria-label="Toggle Theme">
+<span class="theme-toggle-track"><span class="theme-toggle-stars"><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span></span><span class="theme-toggle-sun-rays"></span></span>
+<span class="theme-toggle-thumb"><span class="material-symbols-outlined theme-toggle-sun">wb_sunny</span><span class="material-symbols-outlined theme-toggle-moon">nights_stay</span></span>
+</button>
+<button
+class="enquire-btn bg-primary px-6 py-2 rounded-lg font-headline font-bold text-on-primary hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all active:scale-95">
+Enquire Now
+</button>
+</div>
+</div>
+</nav>
+<main class="pt-28 md:pt-32 pb-20 grid-bg min-h-[1024px]" data-stitch-vh="min-h-[1024px]===min-h-screen">
+<header class="max-w-7xl mx-auto px-6 mb-12">
+<h1 class="text-4xl md:text-6xl font-extrabold font-headline mb-8 tracking-tighter leading-none text-on-surface">
+FUTURE <span class="text-primary neon-glow-primary">SKILLS</span> CATALOG
+</h1>
+<p class="text-on-surface-variant font-body max-w-2xl text-lg leading-relaxed">
+Unlock the next generation of technical expertise. From core programming to generative AI, master the tools of tomorrow's digital economy.
+</p>
+</header>
+<div class="py-6 border-y border-outline-variant/50 mb-12">
+<div class="max-w-7xl mx-auto px-6 flex flex-wrap gap-3" id="course-filters">
+<button class="filter-btn px-5 py-2 rounded-full border-2 border-primary bg-primary/30 text-primary font-label text-sm font-bold neon-glow-text shadow-[0_0_10px_rgba(255,45,120,0.2)]">All Programs</button>
+<button class="filter-btn px-5 py-2 rounded-full border border-outline-variant bg-surface-container text-on-surface-variant font-label text-sm hover:border-secondary hover:text-secondary transition-all">Certified Programs</button>
+<button class="filter-btn px-5 py-2 rounded-full border border-outline-variant bg-surface-container text-on-surface-variant font-label text-sm hover:border-secondary hover:text-secondary transition-all">Programming</button>
+<button class="filter-btn px-5 py-2 rounded-full border border-outline-variant bg-surface-container text-on-surface-variant font-label text-sm hover:border-secondary hover:text-secondary transition-all">AI &amp; Future Skills</button>
+<button class="filter-btn px-5 py-2 rounded-full border border-outline-variant bg-surface-container text-on-surface-variant font-label text-sm hover:border-secondary hover:text-secondary transition-all">Design &amp; Creative</button>
+<button class="filter-btn px-5 py-2 rounded-full border border-outline-variant bg-surface-container text-on-surface-variant font-label text-sm hover:border-secondary hover:text-secondary transition-all">Hardware &amp; Networking</button>
+</div>
+</div>
+<section class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-duration="1000">
+<div class="group bg-surface-container neon-border-tertiary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div class="">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-tertiary/30 rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-3xl" data-icon="verified">verified</span>
+</div>
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-widest font-label shadow-[0_0_10px_rgba(255,224,74,0.4)]">Premium</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-tertiary transition-colors">MKCL’S MSCIT</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Flagship digital literacy certification by MKCL. Essential computer skills for academic and professional success.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Certified Programs</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>6 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container neon-border-secondary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div class="">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-secondary/30 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="settings_input_component">settings_input_component</span>
+</div>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest font-label">Practical</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-secondary transition-colors">Diploma in IT Hardware &amp; Networking</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Comprehensive training in PC assembly, troubleshooting, server management, and secure network infrastructure design.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-primary text-xs font-label uppercase font-bold tracking-tighter">Hardware</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>1 Year</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container neon-border-primary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div class="">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-primary/30 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="code">code</span>
+</div>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-widest font-label">Beginner to Pro</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-primary transition-colors">Web Designing &amp; Web Development</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Build dynamic, responsive web applications using modern HTML, CSS, JavaScript, and contemporary web frameworks.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Programming</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>4 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container border border-outline-variant/50 p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-primary/30 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="palette">palette</span>
+</div>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-widest font-label">Beginner</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-primary transition-colors">Graphic Designing</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Master industry-standard tools for visual communication, branding, typography, and stunning graphic creation.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Design &amp; Creative</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>4 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container neon-border-secondary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-secondary/30 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="draw">draw</span>
+</div>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest font-label">Intermediate</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-secondary transition-colors">UI UX Designing</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Design beautiful, user-centric interfaces. Master wireframing, prototyping, user research, and modern design systems.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-primary text-xs font-label uppercase font-bold tracking-tighter">Design &amp; Creative</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>1 Year</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container border border-outline-variant/50 p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div class="">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-tertiary/30 rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-3xl" data-icon="computer">computer</span>
+</div>
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-widest font-label">Beginner</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-tertiary transition-colors">Basics of Computer</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Learn fundamental computer operations, OS usage, file management, and essential internet navigation skills.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Fundamentals</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>2 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container border border-outline-variant/50 p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-primary/30 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="desktop_windows">desktop_windows</span>
+</div>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-widest font-label">Beginner</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-primary transition-colors">Computer Fundamentals</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Deep dive into computer architecture, system software usage, and core IT concepts for complete beginners.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Fundamentals</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>6 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container neon-border-secondary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-secondary/30 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="table_chart">table_chart</span>
+</div>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest font-label">Corporate</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-secondary transition-colors">Office Automation</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Master MS Word, Excel, PowerPoint, and modern office tools for workplace productivity and professional documentation.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-primary text-xs font-label uppercase font-bold tracking-tighter">Office Automation</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>1 Year</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container border border-outline-variant/50 p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-tertiary/30 rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-3xl" data-icon="account_balance">account_balance</span>
+</div>
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-widest font-label">Skill Based</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-tertiary transition-colors">Financial Accounting with Tally ERP</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Advanced accounting, inventory management, and comprehensive financial reporting with professional GST filing.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Finance</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>6 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container neon-border-primary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-primary/30 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="keyboard">keyboard</span>
+</div>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-widest font-label">Essential</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-primary transition-colors">Marathi Typing with Advanced Methods and AI</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Master touch typing in Marathi using AI-driven methods. Achieve high speed and accuracy for professional exams.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Typing</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>6 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container border border-outline-variant/50 p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-secondary/30 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="keyboard">keyboard</span>
+</div>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest font-label">Essential</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-secondary transition-colors">English and Hindi Typing with Advanced Methods and AI</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">High-speed English and Hindi typing training with advanced AI techniques designed for government and corporate roles.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-primary text-xs font-label uppercase font-bold tracking-tighter">Typing</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>6 Months</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container border border-outline-variant/50 p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-tertiary/30 rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-3xl" data-icon="terminal">terminal</span>
+</div>
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-widest font-label">Beginner</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-tertiary transition-colors">Basics of C, C++, C#, Java, Python, Kotlin Programming</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Build a strong foundation in core programming concepts across multiple essential and modern development languages.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Programming</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>1 Year</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container neon-border-primary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-primary/30 rounded-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="integration_instructions">integration_instructions</span>
+</div>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-widest font-label">Advanced</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-primary transition-colors">Advance in C, C++, C#, Java, Python, Kotlin Programming</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Master advanced programming techniques, complex data structures, and robust enterprise-grade software development.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Programming</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>2 Years</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container neon-border-secondary p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-secondary/30 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="psychology">psychology</span>
+</div>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-widest font-label">Advanced</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-secondary transition-colors">Prompt Engineering and Generative AI</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Master LLMs, precision prompt crafting, and generative AI tools to automate workflows and enhance creative productivity.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-primary text-xs font-label uppercase font-bold tracking-tighter">AI &amp; Future Skills</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>1 Year</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+<div class="group bg-surface-container border border-outline-variant/50 p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-tertiary/30 rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-3xl" data-icon="trending_up">trending_up</span>
+</div>
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-widest font-label">Strategy</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:text-tertiary transition-colors">Digital Marketing with AI</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">Dominate SEO, SMM, and dynamic content strategy utilizing cutting-edge AI-powered marketing tools for rapid brand growth.</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="text-secondary text-xs font-label uppercase font-bold tracking-tighter">Marketing</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>5 Years</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>
+</section>
+<section class="max-w-7xl mx-auto px-6 mt-24" data-aos="fade-up" data-aos-duration="1000">
+<div class="relative bg-surface-container p-12 overflow-hidden neon-border-primary text-center rounded-2xl">
+<div class="absolute inset-0 bg-primary/5 opacity-30 pointer-events-none"></div>
+<h2 class="text-4xl font-extrabold font-headline text-on-surface mb-6 relative z-10">CAN'T FIND WHAT YOU'RE <span class="text-primary neon-glow-primary">LOOKING FOR?</span></h2>
+<p class="text-on-surface-variant font-body max-w-xl mx-auto mb-10 relative z-10 leading-relaxed">
+Our curriculum evolves as fast as the tech industry. Contact our career counselors for a personalized learning path tailored to your goals.
+</p>
+<div class="flex flex-col md:flex-row gap-6 justify-center relative z-10">
+<a href="https://drive.google.com/file/d/1aTZql-wmFKWEegyFzC9prZgmYifZ8Shy/view?usp=drive_link" target="_blank" class="px-10 py-4 bg-primary text-on-primary font-headline font-bold uppercase tracking-widest text-sm hover:brightness-110 neon-button-glow transition-all group relative inline-block text-center">
+    <span class="relative z-10">Download Brochure</span>
+    <div class="shine-container"><div class="shine-element"></div></div>
+</a>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-background border-t border-secondary/30 py-12 px-6 md:px-12 lg:px-20">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="space-y-4">
+<div class="text-lg font-bold text-tertiary font-headline">SGCC</div>
+<p class="font-['Inter'] text-sm text-on-surface-variant leading-relaxed">
+Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.
+</p>
+<div class="flex gap-4 pt-2">
+<a href="https://earth.google.com/web/search/Church+Of+St%2e+Joseph+The+Worker,+B-9,+next+to+Cardinal+School,+Subhash+Nagar,+Bandra+East,+Mumbai,+Maharashtra+400051/@19.06669428,72.84752296,19.59091956a,200.35027466d,35y,0h,0t,0r/data=CuYBGrcBErABCiUweDNiZTdjOTFjNWM4Njc2Y2Q6MHg0YjI4MzNjNjBiMzQzNDQ4Gb_v37w4ETNAIeFDiZY8NlJAKnVDaHVyY2ggT2YgU3QuIEpvc2VwaCBUaGUgV29ya2VyLCBCLTksIG5leHQgdG8gQ2FyZGluYWwgU2Nob29sLCBTdWJoYXNoIE5hZ2FyLCBCYW5kcmEgRWFzdCwgTXVtYmFpLCBNYWhhcmFzaHRyYSA0MDAwNTEYASABIiYKJAnIj-MTxsY8QBEl9QGsOIYowBkDpLkCBR5VQCE-7ehzeEI8wEICCAE6AwoBMEICCABKDQj___________8BEAA?authuser=0" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-primary hover:border-primary hover:text-on-primary hover:shadow-[0_0_15px_rgba(255,26,107,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Location on Google Earth">
+<span class="material-symbols-outlined text-[20px]">public</span>
+</a>
+<a href="https://mail.google.com/mail/?view=cm&fs=1&to=sgccbandra@gmail.com" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-secondary hover:border-secondary hover:text-on-secondary hover:shadow-[0_0_15px_rgba(0,255,204,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Email Us">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</a>
+<a href="https://wa.me/918898919457" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:border-[#25D366] hover:text-white hover:shadow-[0_0_15px_rgba(37,211,102,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Chat on WhatsApp">
+<span class="material-symbols-outlined text-[20px]">call</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="courses.html">Courses</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="contact.html">Bandra East Campus</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block cursor-pointer" onclick="openFaqModal(event)">FAQ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Legal</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="privacy.html">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="terms.html">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Contact Us</h4>
+<p class="font-['Inter'] text-sm text-on-surface-variant mb-4">Church Of St. Joseph The Worker, B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai, Maharashtra 400051</p>
+<div class="bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+<p class="text-[10px] uppercase font-label text-on-surface-variant tracking-widest mb-1">Support Line</p>
+<p class="text-secondary font-headline font-bold">+91 88989 19457 / 82866 13019</p>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center">
+<p class="font-['Inter'] text-sm text-on-surface-variant">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
+</div>
+</footer>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+<script type="module" defer src="./main.js"></script>
+<script>
+(async function syncCoursesFromAdmin() {
+const JSONBIN_BIN_ID = '69fb633daaba8821977b7752';
+const JSONBIN_MASTER_KEY = '$2a$10$XurIdUSPSkFigbQpqqdNJOIXGaFBtwGIi9cUjCy/SUJNlB.WW9AdK';
+try {
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY }
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (data.record && data.record.courses && data.record.courses.length > 0) {
+      localStorage.setItem('sgcc_courses', JSON.stringify(data.record.courses));
+    }
+  }
+} catch(e) {}
+const stored = localStorage.getItem('sgcc_courses');
+if (!stored) return;
+const courses = JSON.parse(stored);
+const grid = document.querySelector('section.max-w-7xl.mx-auto.px-6.grid');
+if (!grid) return;
+const colorMap = {
+primary: { border:'neon-border-primary', icon:'text-primary', bg:'bg-primary/30', badge:'bg-primary-container text-on-primary-container', cat:'text-secondary' },
+secondary: { border:'neon-border-secondary', icon:'text-secondary', bg:'bg-secondary/30', badge:'bg-secondary-container text-on-secondary-container', cat:'text-primary' },
+tertiary: { border:'neon-border-tertiary', icon:'text-tertiary', bg:'bg-tertiary/30', badge:'bg-tertiary-container text-on-tertiary-container', cat:'text-secondary' },
+};
+grid.innerHTML = courses.map(c => {
+const cm = colorMap[c.color] || colorMap.primary;
+return `<div class="group bg-surface-container ${cm.border} p-6 flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 rounded-2xl">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 ${cm.bg} rounded-lg"><span class="material-symbols-outlined ${cm.icon} text-3xl">${c.icon || 'school'}</span></div>
+<span class="px-3 py-1 ${cm.badge} text-[10px] font-bold uppercase tracking-widest font-label">${c.badge || ''}</span>
+</div>
+<h3 class="text-xl font-bold font-headline text-on-surface mb-3 group-hover:${cm.icon} transition-colors">${c.name}</h3>
+<p class="text-on-surface-variant font-body text-sm leading-relaxed mb-6">${c.description || ''}</p>
+<div class="flex items-center justify-between gap-2 mb-8">
+<span class="${cm.cat} text-xs font-label uppercase font-bold tracking-tighter">${c.category}</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs font-label"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>${c.duration}</span>
+</div>
+</div>
+<button class="w-full py-3 border border-primary text-primary font-label text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-primary hover:text-on-primary neon-button-glow enquire-btn">Enquire Now</button>
+</div>`;
+}).join('');
+// Re-attach enquiry buttons
+grid.querySelectorAll('.enquire-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+const name = btn.closest('.group')?.querySelector('h3')?.textContent || '';
+const select = document.querySelector('#enquiry-form select');
+if (select) {
+Array.from(select.options).forEach(opt => {
+const optText = opt.text.replace(/[\s''-]/g,'').toLowerCase();
+const nameClean = name.replace(/[\s''-]/g,'').toLowerCase();
+opt.selected = optText && (optText === nameClean || nameClean.startsWith(optText));
+});
+}
+const modal = document.getElementById('enquiry-modal');
+if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); setTimeout(()=>{ modal.classList.remove('opacity-0'); modal.children[0]?.classList.replace('scale-95','scale-100'); },10); }
+});
+});
+// Update enquiry modal dropdown from localStorage courses
+const select = document.querySelector('#enquiry-form select');
+if (select) {
+select.innerHTML = '<option value="" disabled selected>Select a course</option>'
++ courses.map(c => `<option>${c.name}</option>`).join('');
+}
+// Signal main.js to rebuild filter chips
+window.dispatchEvent(new Event('courses_synced'));
+})();
+</script>
+
+<!-- FAQ Modal -->
+<div id="faq-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+  <div class="bg-surface-container glass-card p-6 md:p-10 rounded-2xl max-w-2xl w-full mx-4 border border-outline/30 relative max-h-[85vh] overflow-y-auto">
+    <button onclick="closeFaqModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
+    <h3 class="text-3xl font-headline font-bold text-on-surface mb-6 flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary text-4xl">live_help</span>
+      Frequently Asked Questions
+    </h3>
+    <div class="space-y-4">
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          What courses do you offer?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We offer a wide range of courses including MS-CIT, Tally Prime, Web Development, Graphic Design, Python, Advanced Programming, and Digital Marketing.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Where is the campus located?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We are located at B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai. It's a quick 2-minute walk from Bandra Colony metro station!
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          How do I enroll in a course?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          You can enroll by visiting our Bandra East campus in person, or by filling out the online Enquiry form. Our staff will guide you through the process.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Are your classrooms air-conditioned?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Yes, we provide fully air-conditioned modern computer labs to ensure a comfortable and productive learning environment for all students.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Do you provide certificates?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Absolutely! Upon successful completion of your course and relevant exams, you will receive an industry-recognized certificate (e.g., from MKCL for MS-CIT).
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+</body></html>

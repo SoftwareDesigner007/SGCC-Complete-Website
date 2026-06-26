@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════
+     SGCC — Admin Dashboard
+     Protected management panel for the institute admin.
+     Features:
+       • Login screen (credentials via JSONBin cloud storage or localStorage fallback)
+       • Dashboard: enquiry stats, course breakdown chart, real-time polling
+       • Course Manager: add / edit / delete courses (saved to localStorage)
+       • Study Material Manager: link PDFs and videos per course
+       • Notification Banner: push a top-bar announcement to the homepage
+       • Settings: change admin credentials and profile photo
+     Authentication: session stored in sessionStorage (cleared on tab close).
+     ═══════════════════════════════════════════════════════ -->
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SGCC Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="./tailwind-config.js"></script>
+<script src="./theme.js"></script>
+  <script type="module" crossorigin src="/assets/main-BCCjS8TC.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-ChDKmW2p.css">
+</head>
+<body class="bg-background text-on-background font-body min-h-screen overflow-hidden">
+<div id="admin-login-overlay" class="fixed inset-0 z-[200] bg-background flex flex-col items-center justify-center p-4">
+<div class="glass-card w-full max-w-sm p-8 rounded-2xl shadow-[0_0_30px_rgba(255,45,120,0.2)] border-primary/50 text-center">
+<h2 class="text-2xl font-bold text-primary font-['Sora'] mb-2">Admin Login</h2>
+<p class="text-sm text-on-surface-variant mb-6">Enter credentials to access dashboard</p>
+<form id="admin-login-form" class="space-y-4">
+<input required type="text" id="admin-user" class="w-full bg-surface-container border-outline/50 rounded-lg px-5 py-3 focus:ring-primary focus:border-primary text-on-surface outline-none" placeholder="Username">
+<input required type="password" id="admin-pass" class="w-full bg-surface-container border-outline/50 rounded-lg px-5 py-3 focus:ring-primary focus:border-primary text-on-surface outline-none" placeholder="Password">
+<p id="login-error" class="text-error text-xs hidden">Invalid username or password.</p>
+<button type="submit" class="w-full bg-primary text-on-primary py-3 rounded-lg font-headline font-bold hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all">Login</button>
+</form>
+<div id="sync-applied-msg" class="hidden mt-4 p-3 rounded-lg bg-secondary/20 border border-secondary/40 text-secondary text-xs font-bold">
+✅ New credentials synced! Login with your updated username &amp; password.
+</div>
+</div>
+</div>
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_0_15px_rgba(0,255,204,0.1)]">
+<div class="flex items-center gap-4">
+<span id="admin-class-name-header" class="text-xl md:text-2xl font-black text-primary drop-shadow-[0_0_8px_var(--color-primary)] font-['Sora'] tracking-tight truncate">SGCC (Shree Ganesh Computer Classes)</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<div class="relative group">
+<button class="text-on-surface-variant hover:text-primary hover:drop-shadow-[0_0_8px_var(--color-primary)] transition-all active:scale-95 duration-200 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span id="notif-badge" class="absolute -top-1 -right-1 bg-primary text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(255,45,120,0.8)] hidden">0</span>
+</button>
+<div id="notif-dropdown" class="absolute right-0 top-full mt-2 w-72 glass-card rounded-xl border border-primary/30 shadow-[0_0_30px_rgba(255,45,120,0.2)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
+<div class="p-4 border-b border-outline-variant bg-surface-container/80">
+<h4 class="text-xs font-bold font-headline text-on-surface-variant uppercase tracking-widest">New Enquiries</h4>
+</div>
+<div id="notif-list" class="max-h-64 overflow-y-auto divide-y divide-outline-variant/30 flex flex-col">
+<div class="p-4 text-center text-xs text-on-surface-variant font-label">No new notifications</div>
+</div>
+</div>
+</div>
+<button id="admin-settings-btn" class="text-on-surface-variant hover:text-primary hover:drop-shadow-[0_0_8px_var(--color-primary)] transition-all active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button id="admin-profile-btn" class="h-8 w-8 rounded-full border border-primary overflow-hidden hover:shadow-[0_0_12px_rgba(255,45,120,0.6)] transition-all">
+<img id="admin-profile-img-header" alt="Admin" data-alt="Professional headshot of a young male administrator in a dark tech environment with subtle blue and pink studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkn7SzaXQLsjjnQp5km36PwYc8-tj0toKVnBLHGRTeePlURNJcEZwbhNYZORbCptkZwB5BnMFs1irH0jU883JcmaieZQAJf5eqaYj7Rpt59fJVJOJi2Gju6fMdaBcjoKQv8i4IQO6HBpTWUEoeBorvXXpL6gaZhgiiJEbda9MWX0KUeJNE1-5KMo0qoobnhBnQvl70_kEwE1YFo5_2P_38yE_W5_4m7F0l28G2pSt0J5WpIjusr2ILxs2LvOYreyvpU37CZKJOtiCN"/>
+</button>
+</div>
+</div>
+</header>
+<aside class="fixed left-0 top-0 h-full flex flex-col pt-28 md:pt-32 pb-6 bg-background border-r border-secondary/30 w-64 z-40 hidden md:flex">
+<div class="px-6 mb-8">
+<h2 id="admin-class-name-sidebar" class="text-lg font-bold text-primary font-['Sora']">SGCC Admin</h2>
+<p class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-['Space_Grotesk']">Institute Management</p>
+</div>
+<nav class="flex-1 px-4 space-y-2" id="sidebar-nav">
+<a data-section="section-dashboard" class="nav-item flex items-center gap-3 px-4 py-3 bg-[var(--color-secondary)]/30 text-secondary border-r-4 border-secondary font-bold drop-shadow-[0_0_10px_var(--color-secondary)] font-['Space_Grotesk'] uppercase tracking-wider text-sm transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>Dashboard
+</a>
+<a data-section="section-courses" class="nav-item flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary font-['Space_Grotesk'] uppercase tracking-wider text-sm transition-all" href="#">
+<span class="material-symbols-outlined">school</span>Courses
+</a>
+<a data-section="section-materials" class="nav-item flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary font-['Space_Grotesk'] uppercase tracking-wider text-sm transition-all" href="#">
+<span class="material-symbols-outlined">menu_book</span>Study Material
+</a>
+<a data-section="section-notification" class="nav-item flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary font-['Space_Grotesk'] uppercase tracking-wider text-sm transition-all" href="#">
+<span class="material-symbols-outlined">campaign</span>Notification
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-6">
+<a href="./enquiry.html" class="block text-center w-full py-3 px-4 bg-transparent border border-primary text-primary font-bold font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all">
+New Enquiry
+</a>
+<div class="pt-4 border-t border-outline-variant space-y-1">
+<a class="flex items-center gap-3 px-5 py-3 text-on-surface-variant hover:text-on-surface-variant transition-colors font-['Space_Grotesk'] text-xs uppercase tracking-widest" href="/index.html">
+<span class="material-symbols-outlined text-sm">home</span>
+Back to Website
+</a>
+<button id="theme-toggle" class="theme-toggle-pill" aria-label="Toggle Theme">
+<span class="theme-toggle-track"><span class="theme-toggle-stars"><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span></span><span class="theme-toggle-sun-rays"></span></span>
+<span class="theme-toggle-thumb"><span class="material-symbols-outlined theme-toggle-sun">wb_sunny</span><span class="material-symbols-outlined theme-toggle-moon">nights_stay</span></span>
+</button>
+<a id="logout-btn" class="flex items-center gap-3 px-5 py-3 text-on-surface-variant hover:text-primary transition-colors font-['Space_Grotesk'] text-xs uppercase tracking-widest cursor-pointer" href="#">
+<span class="material-symbols-outlined text-sm">logout</span>
+Logout
+</a>
+</div>
+</div>
+</aside>
+<main class="md:ml-64 pt-28 md:pt-32 p-6 md:p-10">
+<div class="max-w-7xl mx-auto space-y-8">
+<div id="section-dashboard" class="space-y-8">
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-3xl font-extrabold font-headline tracking-tight text-on-background">System Overview</h1>
+<p class="text-on-surface-variant font-body">Real-time institute performance analytics.</p>
+</div>
+<div class="flex gap-3">
+<div class="px-5 py-3 rounded-lg bg-surface-container border border-outline-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">calendar_today</span>
+<span class="text-xs font-label uppercase tracking-wider text-on-surface-variant">Last 30 Days</span>
+</div>
+</div>
+</section>
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="glass-card p-6 rounded-xl group hover:border-primary transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<span class="p-2 rounded-lg bg-primary/30 text-primary"><span class="material-symbols-outlined">person_search</span></span>
+<span class="text-[10px] font-label text-primary font-bold uppercase tracking-widest">+0%</span>
+</div>
+<h3 class="text-on-surface-variant text-xs font-label uppercase tracking-widest mb-1">Total Enquiries</h3>
+<p id="admin-total-enquiries" class="text-2xl font-bold font-headline text-on-surface neon-text-pink">0</p>
+</div>
+<div class="glass-card p-6 rounded-xl group hover:border-secondary transition-all duration-300 border-secondary/20">
+<div class="flex justify-between items-start mb-4">
+<span class="p-2 rounded-lg bg-secondary/30 text-secondary"><span class="material-symbols-outlined">how_to_reg</span></span>
+<span class="text-[10px] font-label text-secondary font-bold uppercase tracking-widest">+0%</span>
+</div>
+<h3 class="text-on-surface-variant text-xs font-label uppercase tracking-widest mb-1">Active Enrollments</h3>
+<p id="admin-active-enrollments" class="text-2xl font-bold font-headline text-on-surface neon-text-cyan">0</p>
+</div>
+<div class="glass-card p-6 rounded-xl group transition-all duration-300 border-tertiary/20">
+<div class="flex justify-between items-start mb-4">
+<span class="p-2 rounded-lg bg-tertiary/30 text-tertiary"><span class="material-symbols-outlined">verified</span></span>
+<div class="w-12 h-1 bg-surface-container-highest rounded-full overflow-hidden self-center"><div class="bg-tertiary h-full w-[0%]"></div></div>
+</div>
+<h3 class="text-on-surface-variant text-xs font-label uppercase tracking-widest mb-1">Course Completion</h3>
+<p id="admin-course-completion" class="text-2xl font-bold font-headline text-tertiary">0%</p>
+</div>
+<div class="glass-card p-6 rounded-xl group hover:border-primary transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<span class="p-2 rounded-lg bg-primary/30 text-primary"><span class="material-symbols-outlined">trending_up</span></span>
+<span class="text-[10px] font-label text-primary font-bold uppercase tracking-widest">No Data</span>
+</div>
+<h3 class="text-on-surface-variant text-xs font-label uppercase tracking-widest mb-1">Revenue Growth</h3>
+<p id="admin-revenue-growth" class="text-2xl font-bold font-headline text-on-surface neon-text-pink">+0%</p>
+</div>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 glass-card rounded-xl overflow-hidden border-outline-variant/50 flex flex-col">
+<div class="p-6 border-b border-outline-variant/50 flex justify-between items-center">
+<h2 class="text-lg font-bold font-headline tracking-tight">Recent Enquiries</h2>
+<button id="admin-clear-all-btn" class="text-xs font-label text-error uppercase tracking-widest border border-error/30 px-3 py-1.5 rounded-lg hover:bg-error/30 transition-colors">Clear All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Student Name</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Course</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Phone</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Message</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Date</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Status</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant text-right">Action</th>
+</tr>
+</thead>
+<tbody id="admin-enquiries-tbody" class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-container transition-colors">
+<td colspan="7" class="px-6 py-8 text-center text-on-surface-variant text-sm">No enquiries yet. Submit one from the website!</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="glass-card rounded-xl p-6 border-outline-variant/50">
+<h2 class="text-lg font-bold font-headline tracking-tight mb-6">Course Enquiries</h2>
+<div id="admin-course-breakdown" class="space-y-4">
+<p class="text-sm text-on-surface-variant">No data yet.</p>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant/50">
+<div class="p-4 rounded-lg bg-surface-container-highest border border-outline-variant relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-4xl">rocket_launch</span></div>
+<h4 class="text-sm font-bold mb-1">New AI Course Launch</h4>
+<p class="text-xs text-on-surface-variant">Registration starts in 4 days. Early bird discount active.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div id="section-courses" class="hidden space-y-6">
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-3xl font-extrabold font-headline tracking-tight text-on-background">Course Manager</h1>
+<p class="text-on-surface-variant font-body">Add, edit, or remove courses and their durations.</p>
+</div>
+<button id="add-course-btn" class="flex items-center gap-2 px-6 py-3 bg-primary text-on-primary font-headline font-bold text-sm uppercase tracking-widest hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>Add Course
+</button>
+</section>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead><tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Course Name</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Category</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Duration</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant text-right">Actions</th>
+</tr></thead>
+<tbody id="courses-table-body" class="divide-y divide-outline-variant/30"></tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="section-materials" class="hidden space-y-6">
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-3xl font-extrabold font-headline tracking-tight text-on-background">Study Material Manager</h1>
+<p class="text-on-surface-variant font-body">Manage study material links and availability per course.</p>
+</div>
+<button id="add-material-btn" class="flex items-center gap-2 px-6 py-3 bg-secondary text-on-secondary font-headline font-bold text-sm uppercase tracking-widest hover:brightness-110 transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>Add Material
+</button>
+</section>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead><tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Course Name</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Material Type</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant">View/Download URL</th>
+<th class="px-6 py-4 text-[10px] font-label uppercase tracking-widest text-on-surface-variant text-right">Action</th>
+</tr></thead>
+<tbody id="materials-table-body" class="divide-y divide-outline-variant/30"></tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="section-notification" class="hidden space-y-6">
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-3xl font-extrabold font-headline tracking-tight text-on-background">Notification Banner</h1>
+<p class="text-on-surface-variant font-body">Manage the homepage top notification banner.</p>
+</div>
+</section>
+<div class="glass-card rounded-xl p-8 border border-outline-variant max-w-2xl">
+<form id="notification-form" class="space-y-6">
+<div class="flex items-center justify-between p-4 bg-surface-container-high rounded-lg border border-outline-variant">
+<div>
+<h4 class="font-headline font-bold text-on-surface">Enable Notification</h4>
+<p class="text-xs text-on-surface-variant mt-1">Show or hide the banner on the homepage</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" id="notif-enabled" class="sr-only peer">
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Notification Text</label>
+<input id="notif-text" type="text" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Free Demo Class!">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Button Text</label>
+<input id="notif-btn-text" type="text" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Book Now">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Button Link</label>
+<input id="notif-btn-link" type="text" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. https://docs.google.com/forms/...">
+</div>
+<button type="submit" class="w-full py-3 bg-primary text-on-primary font-headline font-bold text-sm uppercase tracking-widest hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all">Save Notification Settings</button>
+</form>
+</div>
+</div>
+</div>
+</main>
+<div id="course-modal" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4" style="display:none">
+<div class="glass-card w-full max-w-lg p-8 rounded-2xl border border-primary/30 shadow-[0_0_40px_rgba(255,45,120,0.2)]">
+<h3 id="modal-title" class="text-xl font-bold font-headline text-primary mb-6">Add Course</h3>
+<form id="course-form" class="space-y-4">
+<input type="hidden" id="course-edit-id">
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Course Name</label>
+<input id="cf-name" type="text" required class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Web Development">
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Category</label>
+<input id="cf-category" type="text" required class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Programming">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Duration</label>
+<input id="cf-duration" type="text" required class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. 6 Months">
+</div>
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Badge Label</label>
+<input id="cf-badge" type="text" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Beginner, Advanced">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Description</label>
+<textarea id="cf-description" rows="3" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors resize-none" placeholder="Short course description..."></textarea>
+</div>
+<div class="flex gap-3 pt-2">
+<button type="button" id="close-modal-btn" class="flex-1 py-3 border border-outline-variant text-on-surface-variant font-headline font-bold text-sm uppercase tracking-widest hover:border-primary transition-all">Cancel</button>
+<button type="submit" class="flex-1 py-3 bg-primary text-on-primary font-headline font-bold text-sm uppercase tracking-widest hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all">Save Course</button>
+</div>
+</form>
+</div>
+</div>
+<div id="material-modal" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4" style="display:none">
+<div class="glass-card w-full max-w-md p-8 rounded-2xl border border-secondary/30 shadow-[0_0_40px_rgba(0,255,204,0.2)]">
+<h3 id="mat-modal-title" class="text-xl font-bold font-headline text-secondary mb-6">Study Material</h3>
+<form id="material-form" class="space-y-4">
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Course</label>
+<select id="mat-course-id" required class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-secondary transition-colors">
+</select>
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Material Type</label>
+<input id="mat-type" type="text" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-secondary transition-colors" placeholder="e.g. PDF, Video, PPTX">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">View URL</label>
+<input id="mat-view-url" type="url" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-secondary transition-colors" placeholder="https://drive.google.com/view...">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Download URL (PDF/File)</label>
+<input id="mat-download-url" type="url" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-secondary transition-colors" placeholder="https://drive.google.com/download...">
+</div>
+<div class="flex gap-3 pt-2">
+<button type="button" id="close-mat-modal-btn" class="flex-1 py-3 border border-outline-variant text-on-surface-variant font-headline font-bold text-sm uppercase tracking-widest hover:border-secondary transition-all">Cancel</button>
+<button type="submit" class="flex-1 py-3 bg-secondary text-on-secondary font-headline font-bold text-sm uppercase tracking-widest hover:brightness-110 transition-all">Save</button>
+</div>
+</form>
+</div>
+</div>
+<div id="settings-modal" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4" style="display:none">
+<div class="glass-card w-full max-w-md p-8 rounded-2xl border border-primary/30 shadow-[0_0_40px_rgba(255,45,120,0.2)]">
+<h3 class="text-xl font-bold font-headline text-primary mb-6">Settings</h3>
+<form id="settings-form" class="space-y-4">
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Class Name</label>
+<input id="set-class-name" type="text" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" value="SGCC (Shree Ganesh Computer Classes)">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">Profile Photo</label>
+<input id="set-profile-photo" type="file" accept="image/*" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors">
+</div>
+<div class="border-t border-outline-variant/50 pt-4">
+<p class="text-xs font-label uppercase tracking-widest text-secondary mb-3">🔐 Admin Credentials</p>
+<div class="space-y-3">
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">New Username</label>
+<input id="set-username" type="text" autocomplete="off" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="Enter new username">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-1 block">New Password</label>
+<input id="set-password" type="password" autocomplete="new-password" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="Enter new password">
+</div>
+<p class="text-[10px] text-on-surface-variant">Leave blank to keep current credentials. After saving, use the <span class="text-secondary font-bold">Browser Sync Link</span> to apply changes on other browsers.</p>
+</div>
+</div>
+<div class="flex gap-3 pt-2">
+<button type="button" id="close-settings-modal" class="flex-1 py-3 border border-outline-variant text-on-surface-variant font-headline font-bold text-sm uppercase tracking-widest hover:border-primary transition-all">Cancel</button>
+<button type="submit" class="flex-1 py-3 bg-primary text-on-primary font-headline font-bold text-sm uppercase tracking-widest hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all">Save Changes</button>
+</div>
+</form>
+</div>
+</div>
+<div id="sync-modal" class="fixed inset-0 z-[400] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4" style="display:none">
+<div class="glass-card w-full max-w-md p-8 rounded-2xl border border-secondary/40 shadow-[0_0_40px_rgba(0,255,204,0.25)] text-center">
+<div class="text-4xl mb-3">🔗</div>
+<h3 class="text-xl font-bold font-headline text-secondary mb-2">Credentials Saved!</h3>
+<p class="text-sm text-on-surface-variant mb-5">Copy the link below and open it on any other browser or device to apply the new credentials instantly.</p>
+<div class="flex gap-2 mb-5">
+<input id="sync-link-input" type="text" readonly class="flex-1 bg-surface-container border border-secondary/40 px-4 py-2 text-on-surface text-xs outline-none rounded-lg truncate">
+<button id="copy-sync-link-btn" class="px-4 py-2 bg-secondary text-on-secondary font-headline font-bold text-sm rounded-lg hover:brightness-110 transition-all shrink-0">Copy</button>
+</div>
+<p class="text-[10px] text-on-surface-variant mb-4">⚠️ Keep this link private — it contains your credentials.</p>
+<button id="close-sync-modal" class="w-full py-3 border border-outline-variant text-on-surface-variant font-headline font-bold text-sm uppercase tracking-widest hover:border-secondary transition-all">Done</button>
+</div>
+</div>
+<div id="profile-modal" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4" style="display:none">
+<div class="glass-card w-full max-w-sm p-8 rounded-2xl border border-secondary/30 shadow-[0_0_40px_rgba(0,255,204,0.2)] text-center">
+<h3 class="text-xl font-bold font-headline text-secondary mb-6">Profile Details</h3>
+<div class="flex justify-center mb-4">
+<div class="h-24 w-24 rounded-full border-2 border-secondary overflow-hidden">
+<img id="admin-profile-img-modal" alt="Admin" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkn7SzaXQLsjjnQp5km36PwYc8-tj0toKVnBLHGRTeePlURNJcEZwbhNYZORbCptkZwB5BnMFs1irH0jU883JcmaieZQAJf5eqaYj7Rpt59fJVJOJi2Gju6fMdaBcjoKQv8i4IQO6HBpTWUEoeBorvXXpL6gaZhgiiJEbda9MWX0KUeJNE1-5KMo0qoobnhBnQvl70_kEwE1YFo5_2P_38yE_W5_4m7F0l28G2pSt0J5WpIjusr2ILxs2LvOYreyvpU37CZKJOtiCN"/>
+</div>
+</div>
+<div class="space-y-3 text-left">
+<div>
+<label class="text-[10px] font-label uppercase tracking-widest text-secondary block">Admin Role</label>
+<p class="text-on-surface font-body">Super Administrator</p>
+</div>
+<div>
+<label class="text-[10px] font-label uppercase tracking-widest text-secondary block">Username</label>
+<p id="profile-username-display" class="text-on-surface font-body">BCA</p>
+</div>
+<div>
+<label class="text-[10px] font-label uppercase tracking-widest text-secondary block">Password</label>
+<p class="text-on-surface font-body">••••••••</p>
+</div>
+</div>
+<button type="button" id="close-profile-modal" class="w-full mt-6 py-3 border border-outline-variant text-on-surface-variant font-headline font-bold text-sm uppercase tracking-widest hover:border-secondary transition-all">Close</button>
+</div>
+</div>
+<script>
+// ════════════════════════════════════════════════════════════
+//  JSONBIN CONFIG — Fill in your Bin ID and Master Key
+//  Get them from: https://jsonbin.io
+// ════════════════════════════════════════════════════════════
+const JSONBIN_BIN_ID    = '69fb633daaba8821977b7752';
+const JSONBIN_MASTER_KEY = '$2a$10$XurIdUSPSkFigbQpqqdNJOIXGaFBtwGIi9cUjCy/SUJNlB.WW9AdK';
+// ════════════════════════════════════════════════════════════
+// Hardcoded fallback if JSONBin is not configured
+const DEFAULT_USERNAME = 'BCA';
+const DEFAULT_PASSWORD = 'Ganesh123';
+const USE_JSONBIN = JSONBIN_BIN_ID !== 'PASTE_BIN_ID_HERE';
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`;
+const JSONBIN_PUT_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+const JSONBIN_HEADERS = {
+'Content-Type': 'application/json',
+'X-Master-Key': JSONBIN_MASTER_KEY
+};
+// Fetch credentials from JSONBin
+async function fetchCredentials() {
+if (!USE_JSONBIN) return null;
+try {
+const res = await fetch(JSONBIN_URL, { headers: JSONBIN_HEADERS });
+if (!res.ok) return null;
+const data = await res.json();
+return data.record || null;
+} catch(e) { return null; }
+}
+// Save credentials to JSONBin
+async function saveCredentials(username, password) {
+if (!USE_JSONBIN) return false;
+try {
+const res = await fetch(JSONBIN_PUT_URL, {
+method: 'PUT',
+headers: JSONBIN_HEADERS,
+body: JSON.stringify({ username, password })
+});
+return res.ok;
+} catch(e) { return false; }
+}
+</script>
+<script>
+// --- AUTO-RECOVERY FOR MISSING DEFAULT COURSES ---
+// If the admin added a course before DEFAULT_COURSES was available in admin-course.html,
+// their sgcc_courses array might only contain their new course, wiping out the 15 default ones.
+(function autoRecoverDefaultCourses() {
+const DEFAULT_COURSES = [
+{ id:'c1', name:"MKCL'S MSCIT", category:"Certified Programs", duration:"6 Months", badge:"Premium", description:"Flagship digital literacy certification by MKCL. Essential computer skills for academic and professional success.", icon:"verified", color:"tertiary" },
+{ id:'c2', name:"Diploma in IT Hardware & Networking", category:"Hardware & Networking", duration:"1 Year", badge:"Practical", description:"Comprehensive training in PC assembly, troubleshooting, server management, and secure network infrastructure design.", icon:"settings_input_component", color:"secondary" },
+{ id:'c3', name:"Web Designing & Web Development", category:"Programming", duration:"4 Months", badge:"Beginner to Pro", description:"Build dynamic, responsive web applications using modern HTML, CSS, JavaScript, and contemporary web frameworks.", icon:"code", color:"primary" },
+{ id:'c4', name:"Graphic Designing", category:"Design & Creative", duration:"4 Months", badge:"Beginner", description:"Master industry-standard tools for visual communication, branding, typography, and stunning graphic creation.", icon:"palette", color:"primary" },
+{ id:'c5', name:"UI UX Designing", category:"Design & Creative", duration:"1 Year", badge:"Intermediate", description:"Design beautiful, user-centric interfaces. Master wireframing, prototyping, user research, and modern design systems.", icon:"draw", color:"secondary" },
+{ id:'c6', name:"Basics of Computer", category:"Fundamentals", duration:"2 Months", badge:"Beginner", description:"Learn fundamental computer operations, OS usage, file management, and essential internet navigation skills.", icon:"computer", color:"tertiary" },
+{ id:'c7', name:"Computer Fundamentals", category:"Fundamentals", duration:"6 Months", badge:"Beginner", description:"Deep dive into computer architecture, system software usage, and core IT concepts for complete beginners.", icon:"desktop_windows", color:"primary" },
+{ id:'c8', name:"Office Automation", category:"Office Automation", duration:"1 Year", badge:"Corporate", description:"Master MS Word, Excel, PowerPoint, and modern office tools for workplace productivity and professional documentation.", icon:"table_chart", color:"secondary" },
+{ id:'c9', name:"Financial Accounting with Tally ERP", category:"Finance", duration:"6 Months", badge:"Skill Based", description:"Advanced accounting, inventory management, and comprehensive financial reporting with professional GST filing.", icon:"account_balance", color:"tertiary" },
+{ id:'c10', name:"Marathi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"Master touch typing in Marathi using AI-driven methods. Achieve high speed and accuracy for professional exams.", icon:"keyboard", color:"primary" },
+{ id:'c11', name:"English and Hindi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"High-speed English and Hindi typing training with advanced AI techniques designed for government and corporate roles.", icon:"keyboard", color:"secondary" },
+{ id:'c12', name:"Basics of C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"1 Year", badge:"Beginner", description:"Build a strong foundation in core programming concepts across multiple essential and modern development languages.", icon:"terminal", color:"tertiary" },
+{ id:'c13', name:"Advance in C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"2 Years", badge:"Advanced", description:"Master advanced programming techniques, complex data structures, and robust enterprise-grade software development.", icon:"integration_instructions", color:"primary" },
+{ id:'c14', name:"Prompt Engineering and Generative AI", category:"AI & Future Skills", duration:"1 Year", badge:"Advanced", description:"Master LLMs, precision prompt crafting, and generative AI tools to automate workflows and enhance creative productivity.", icon:"psychology", color:"secondary" },
+{ id:'c15', name:"Digital Marketing with AI", category:"Marketing", duration:"5 Years", badge:"Strategy", description:"Dominate SEO, SMM, and dynamic content strategy utilizing cutting-edge AI-powered marketing tools for rapid brand growth.", icon:"trending_up", color:"tertiary" }
+];
+let current = localStorage.getItem('sgcc_courses');
+if (current) {
+let parsed = JSON.parse(current);
+// If there are very few courses, and none of them are from our default list, it's highly likely they got wiped.
+if (parsed.length > 0 && parsed.length < 15) {
+const defaultIds = DEFAULT_COURSES.map(c => c.id);
+const hasDefaults = parsed.some(c => defaultIds.includes(c.id));
+if (!hasDefaults) {
+// Prepend default courses to the newly added ones
+parsed = [...DEFAULT_COURSES, ...parsed];
+localStorage.setItem('sgcc_courses', JSON.stringify(parsed));
+}
+}
+}
+})();
+document.addEventListener('DOMContentLoaded', () => {
+// Login Logic
+const loginOverlay = document.getElementById('admin-login-overlay');
+const loginForm = document.getElementById('admin-login-form');
+const userInp = document.getElementById('admin-user');
+const passInp = document.getElementById('admin-pass');
+const errorMsg = document.getElementById('login-error');
+if (loginForm) {
+if (sessionStorage.getItem('sgcc_admin_auth') === 'true') {
+loginOverlay.classList.add('hidden');
+document.body.classList.remove('overflow-hidden');
+}
+loginForm.addEventListener('submit', async (e) => {
+e.preventDefault();
+const submitBtn = loginForm.querySelector('button[type="submit"]');
+submitBtn.disabled = true;
+submitBtn.textContent = 'Verifying...';
+// Try JSONBin first, then localStorage cache, then hardcoded defaults
+let creds = await fetchCredentials();
+if (creds) {
+// Cache to localStorage for offline fallback
+localStorage.setItem('sgcc_admin_creds', JSON.stringify(creds));
+} else {
+const cached = JSON.parse(localStorage.getItem('sgcc_admin_creds') || '{}');
+creds = {
+username: cached.username || DEFAULT_USERNAME,
+password: cached.password || DEFAULT_PASSWORD
+};
+}
+submitBtn.disabled = false;
+submitBtn.textContent = 'Login';
+if (userInp.value === creds.username && passInp.value === creds.password) {
+sessionStorage.setItem('sgcc_admin_auth', 'true');
+loginOverlay.classList.add('hidden');
+document.body.classList.remove('overflow-hidden');
+showAdminToast('Login successful!');
+} else {
+errorMsg.classList.remove('hidden');
+}
+});
+}
+// Logout Logic
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+logoutBtn.addEventListener('click', (e) => {
+e.preventDefault();
+sessionStorage.removeItem('sgcc_admin_auth');
+window.location.href = './index.html';
+});
+}
+const navLinks = document.querySelectorAll('aside nav a');
+navLinks.forEach(link => {
+link.addEventListener('click', (e) => {
+if(link.getAttribute('href') === '#') e.preventDefault();
+navLinks.forEach(l => {
+l.classList.remove('bg-[var(--color-secondary)]/30', 'text-secondary', 'border-r-4', 'border-secondary', 'font-bold', 'drop-shadow-[0_0_10px_var(--color-secondary)]');
+l.classList.add('text-on-surface-variant', 'hover:bg-primary/5', 'hover:text-primary');
+});
+link.classList.remove('text-on-surface-variant', 'hover:bg-primary/5', 'hover:text-primary');
+link.classList.add('bg-[var(--color-secondary)]/30', 'text-secondary', 'border-r-4', 'border-secondary', 'font-bold', 'drop-shadow-[0_0_10px_var(--color-secondary)]');
+showAdminToast(link.innerText.trim() + ' section loaded.');
+});
+});
+const newEnquiryBtn = document.querySelector('aside button');
+if (newEnquiryBtn) {
+newEnquiryBtn.addEventListener('click', () => {
+showAdminToast('New Enquiry form opened.');
+});
+}
+const topSearchInput = document.querySelector('input[placeholder="Search data..."]');
+if (topSearchInput) {
+topSearchInput.addEventListener('keypress', (e) => {
+if (e.key === 'Enter') {
+showAdminToast('Searching for: ' + topSearchInput.value);
+topSearchInput.value = '';
+}
+});
+}
+function showAdminToast(message) {
+let container = document.getElementById('toast-container');
+if (!container) {
+container = document.createElement('div');
+container.id = 'toast-container';
+container.className = 'fixed top-24 right-8 z-[100] flex flex-col gap-2 pointer-events-none';
+document.body.appendChild(container);
+}
+const toast = document.createElement('div');
+toast.className = 'glass-card bg-surface-container-highest px-6 py-3 rounded-lg border border-secondary/50 shadow-[0_0_20px_rgba(0,255,204,0.2)] text-on-surface font-headline font-bold text-sm flex items-center gap-3 transform translate-x-full transition-transform duration-300';
+toast.innerHTML = '<span class="material-symbols-outlined text-secondary">check_circle</span> ' + message;
+container.appendChild(toast);
+setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+setTimeout(() => {
+toast.classList.add('translate-x-full');
+setTimeout(() => toast.remove(), 300);
+}, 3000);
+}
+const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+function renderEnquiries(enquiries) {
+const tbody = document.getElementById('admin-enquiries-tbody');
+if (!tbody) return;
+if (enquiries.length === 0) {
+tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-on-surface-variant text-sm">No enquiries yet. Submit one from the website!</td></tr>';
+return;
+}
+tbody.innerHTML = '';
+enquiries.forEach(enq => {
+const tr = document.createElement('tr');
+tr.className = 'hover:bg-surface-container transition-colors';
+const initials = (enq.name || 'U').substring(0, 2).toUpperCase();
+tr.innerHTML = `
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-primary shrink-0">${initials}</div>
+<div>
+<span class="text-sm font-semibold block text-on-surface">${enq.name}</span>
+<span class="text-xs text-on-surface-variant">${enq.email}</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant max-w-[180px] truncate">${enq.course}</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">${enq.phone || '—'}</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant min-w-[250px] max-w-sm whitespace-normal break-words">${enq.message || '—'}</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant whitespace-nowrap">${enq.date}</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-tighter bg-secondary/30 text-secondary border border-secondary/30">${enq.status}</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button data-id="${enq.id}" class="delete-enq-btn text-error hover:text-primary transition-colors p-2 rounded-lg hover:bg-error/30"><span class="material-symbols-outlined text-sm">delete</span></button>
+</td>
+`;
+tbody.appendChild(tr);
+});
+document.querySelectorAll('.delete-enq-btn').forEach(btn => {
+btn.addEventListener('click', (e) => {
+const id = e.currentTarget.getAttribute('data-id');
+let all = JSON.parse(localStorage.getItem('sgcc_enquiries') || '[]');
+all = all.filter(item => item.id !== id);
+localStorage.setItem('sgcc_enquiries', JSON.stringify(all));
+showAdminToast('Enquiry deleted.');
+loadEnquiries();
+});
+});
+}
+function updateDashboardStats() {
+const all = JSON.parse(localStorage.getItem('sgcc_enquiries') || '[]');
+const courses = JSON.parse(localStorage.getItem('sgcc_courses') || '[]');
+// --- Total Enquiries ---
+const totalEl = document.getElementById('admin-total-enquiries');
+if (totalEl) totalEl.textContent = all.length;
+// --- Active Enrollments: count unique courses that have at least 1 enquiry ---
+const enrollEl = document.getElementById('admin-active-enrollments');
+if (enrollEl) {
+const uniqueCourses = new Set(all.map(e => e.course));
+enrollEl.textContent = uniqueCourses.size;
+}
+// --- Course Completion: % of courses that have study material URL set ---
+const completionEl = document.getElementById('admin-course-completion');
+if (completionEl) {
+if (courses.length === 0) {
+completionEl.textContent = '0%';
+} else {
+const materials = JSON.parse(localStorage.getItem('sgcc_materials') || '[]');
+const withMaterial = courses.filter(c => {
+const mat = materials.find(m => m.courseId === c.id);
+return mat && mat.url && mat.url.trim() !== '';
+}).length;
+const pct = Math.round((withMaterial / courses.length) * 100);
+completionEl.textContent = pct + '%';
+// Update progress bar
+const bar = completionEl.closest('.glass-card')?.querySelector('.bg-tertiary.h-full');
+if (bar) bar.style.width = pct + '%';
+}
+}
+// --- Revenue Growth: based on enquiry volume trend (last 15 days vs prior 15 days) ---
+const revenueEl = document.getElementById('admin-revenue-growth');
+if (revenueEl) {
+if (all.length === 0) {
+revenueEl.textContent = '+0%';
+} else {
+const now = Date.now();
+const ms15 = 15 * 24 * 60 * 60 * 1000;
+const recent = all.filter(e => e.timestamp && (now - e.timestamp) < ms15).length;
+const prior  = all.filter(e => e.timestamp && (now - e.timestamp) >= ms15 && (now - e.timestamp) < ms15 * 2).length;
+let growthStr = '+0%';
+if (prior === 0 && recent > 0) {
+growthStr = '+100%';
+} else if (prior > 0) {
+const growth = Math.round(((recent - prior) / prior) * 100);
+growthStr = (growth >= 0 ? '+' : '') + growth + '%';
+}
+revenueEl.textContent = growthStr;
+}
+}
+}
+function loadEnquiries(filterText) {
+const all = JSON.parse(localStorage.getItem('sgcc_enquiries') || '[]');
+// Update all stat cards
+updateDashboardStats();
+// Course breakdown panel (if present)
+const breakdownEl = document.getElementById('admin-course-breakdown');
+if (breakdownEl && all.length > 0) {
+const courseCounts = {};
+all.forEach(e => { courseCounts[e.course] = (courseCounts[e.course] || 0) + 1; });
+const sorted = Object.entries(courseCounts).sort((a,b) => b[1]-a[1]).slice(0, 5);
+const max = sorted[0][1];
+breakdownEl.innerHTML = sorted.map(([course, count]) => `
+<div class="space-y-1">
+<div class="flex justify-between items-end">
+<span class="text-xs font-label uppercase tracking-widest text-on-surface-variant truncate max-w-[130px]">${course}</span>
+<span class="text-sm font-bold text-secondary neon-text-cyan">${count}</span>
+</div>
+<div class="h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width:${Math.round((count/max)*100)}%"></div>
+</div>
+</div>
+`).join('');
+}
+const search = (filterText || '').toLowerCase();
+const filtered = search ? all.filter(e =>
+e.name.toLowerCase().includes(search) ||
+e.email.toLowerCase().includes(search) ||
+e.course.toLowerCase().includes(search)
+) : all;
+renderEnquiries(filtered);
+}
+loadEnquiries();
+// Poll every 5 seconds for real-time updates
+setInterval(updateDashboardStats, 5000);
+window.addEventListener('enquiry_added', () => loadEnquiries());
+// Real-time: sync across tabs
+window.addEventListener('storage', (e) => {
+if (e.key === 'sgcc_enquiries') loadEnquiries();
+});
+// Search
+const enqSearchInput = document.getElementById('admin-enq-search');
+if (enqSearchInput) {
+enqSearchInput.addEventListener('input', () => loadEnquiries(enqSearchInput.value));
+}
+// Clear All
+const clearBtn = document.getElementById('admin-clear-all-btn');
+if (clearBtn) {
+clearBtn.addEventListener('click', () => {
+if (confirm('Delete ALL enquiries? This cannot be undone.')) {
+localStorage.removeItem('sgcc_enquiries');
+loadEnquiries();
+showAdminToast('All enquiries cleared.');
+}
+});
+}
+// ===== COURSE MANAGER =====
+const DEFAULT_COURSES = [
+{ id:'c1', name:"MKCL'S MSCIT", category:"Certified Programs", duration:"6 Months", badge:"Premium", description:"Flagship digital literacy certification by MKCL. Essential computer skills for academic and professional success.", icon:"verified", color:"tertiary" },
+{ id:'c2', name:"Diploma in IT Hardware & Networking", category:"Hardware & Networking", duration:"1 Year", badge:"Practical", description:"Comprehensive training in PC assembly, troubleshooting, server management, and secure network infrastructure design.", icon:"settings_input_component", color:"secondary" },
+{ id:'c3', name:"Web Designing & Web Development", category:"Programming", duration:"4 Months", badge:"Beginner to Pro", description:"Build dynamic, responsive web applications using modern HTML, CSS, JavaScript, and contemporary web frameworks.", icon:"code", color:"primary" },
+{ id:'c4', name:"Graphic Designing", category:"Design & Creative", duration:"4 Months", badge:"Beginner", description:"Master industry-standard tools for visual communication, branding, typography, and stunning graphic creation.", icon:"palette", color:"primary" },
+{ id:'c5', name:"UI UX Designing", category:"Design & Creative", duration:"1 Year", badge:"Intermediate", description:"Design beautiful, user-centric interfaces. Master wireframing, prototyping, user research, and modern design systems.", icon:"draw", color:"secondary" },
+{ id:'c6', name:"Basics of Computer", category:"Fundamentals", duration:"2 Months", badge:"Beginner", description:"Learn fundamental computer operations, OS usage, file management, and essential internet navigation skills.", icon:"computer", color:"tertiary" },
+{ id:'c7', name:"Computer Fundamentals", category:"Fundamentals", duration:"6 Months", badge:"Beginner", description:"Deep dive into computer architecture, system software usage, and core IT concepts for complete beginners.", icon:"desktop_windows", color:"primary" },
+{ id:'c8', name:"Office Automation", category:"Office Automation", duration:"1 Year", badge:"Corporate", description:"Master MS Word, Excel, PowerPoint, and modern office tools for workplace productivity and professional documentation.", icon:"table_chart", color:"secondary" },
+{ id:'c9', name:"Financial Accounting with Tally ERP", category:"Finance", duration:"6 Months", badge:"Skill Based", description:"Advanced accounting, inventory management, and comprehensive financial reporting with professional GST filing.", icon:"account_balance", color:"tertiary" },
+{ id:'c10', name:"Marathi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"Master touch typing in Marathi using AI-driven methods. Achieve high speed and accuracy for professional exams.", icon:"keyboard", color:"primary" },
+{ id:'c11', name:"English and Hindi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"High-speed English and Hindi typing training with advanced AI techniques designed for government and corporate roles.", icon:"keyboard", color:"secondary" },
+{ id:'c12', name:"Basics of C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"1 Year", badge:"Beginner", description:"Build a strong foundation in core programming concepts across multiple essential and modern development languages.", icon:"terminal", color:"tertiary" },
+{ id:'c13', name:"Advance in C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"2 Years", badge:"Advanced", description:"Master advanced programming techniques, complex data structures, and robust enterprise-grade software development.", icon:"integration_instructions", color:"primary" },
+{ id:'c14', name:"Prompt Engineering and Generative AI", category:"AI & Future Skills", duration:"1 Year", badge:"Advanced", description:"Master LLMs, precision prompt crafting, and generative AI tools to automate workflows and enhance creative productivity.", icon:"psychology", color:"secondary" },
+{ id:'c15', name:"Digital Marketing with AI", category:"Marketing", duration:"5 Years", badge:"Strategy", description:"Dominate SEO, SMM, and dynamic content strategy utilizing cutting-edge AI-powered marketing tools for rapid brand growth.", icon:"trending_up", color:"tertiary" },
+];
+function getCoursesData() {
+const s = localStorage.getItem('sgcc_courses');
+return s ? JSON.parse(s) : DEFAULT_COURSES;
+}
+function saveCoursesData(data) {
+localStorage.setItem('sgcc_courses', JSON.stringify(data));
+}
+function getMaterialsData() {
+const s = localStorage.getItem('sgcc_materials');
+if (s) return JSON.parse(s);
+return [];
+}
+function saveMaterialsData(data) {
+localStorage.setItem('sgcc_materials', JSON.stringify(data));
+}
+// Section switching
+function showSection(id) {
+['section-dashboard','section-courses','section-materials', 'section-notification'].forEach(s => {
+const el = document.getElementById(s);
+if (el) el.classList.toggle('hidden', s !== id);
+});
+}
+document.querySelectorAll('.nav-item[data-section]').forEach(link => {
+link.addEventListener('click', e => {
+e.preventDefault();
+const target = link.dataset.section;
+showSection(target);
+document.querySelectorAll('.nav-item').forEach(l => {
+l.classList.remove('bg-[var(--color-secondary)]/30','text-secondary','border-r-4','border-secondary','font-bold','drop-shadow-[0_0_10px_var(--color-secondary)]');
+l.classList.add('text-on-surface-variant');
+});
+link.classList.add('bg-[var(--color-secondary)]/30','text-secondary','border-r-4','border-secondary','font-bold','drop-shadow-[0_0_10px_var(--color-secondary)]');
+link.classList.remove('text-on-surface-variant');
+if (target === 'section-courses') renderCourseTable();
+if (target === 'section-materials') renderMaterialsTable();
+if (target === 'section-notification') loadNotificationSettings();
+});
+});
+// Course Table
+function renderCourseTable() {
+const courses = getCoursesData();
+const tbody = document.getElementById('courses-table-body');
+if (!tbody) return;
+tbody.innerHTML = courses.map(c => `
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 text-sm font-semibold text-on-surface max-w-xs">${c.name}</td>
+<td class="px-6 py-4 text-xs text-on-surface-variant uppercase tracking-widest font-label">${c.category}</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1 text-secondary text-xs font-bold font-label">
+<span class="material-symbols-outlined" style="font-size:14px">schedule</span>${c.duration}
+</span>
+</td>
+<td class="px-6 py-4 text-right flex justify-end gap-2">
+<button onclick="openEditCourse('${c.id}')" class="p-2 rounded-lg border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-all" title="Edit">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button onclick="deleteCourse('${c.id}')" class="p-2 rounded-lg border border-error/30 text-error hover:bg-error/30 transition-all" title="Delete">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</td>
+</tr>`).join('');
+}
+document.getElementById('add-course-btn')?.addEventListener('click', () => {
+window.location.href = './admin-course.html';
+});
+window.openEditCourse = function(id) {
+window.location.href = `./admin-course.html?id=${id}`;
+};
+window.deleteCourse = function(id) {
+if (!confirm('Delete this course?')) return;
+let data = getCoursesData().filter(c => c.id !== id);
+saveCoursesData(data);
+renderCourseTable();
+showAdminToast('Course deleted.');
+};
+function convertToDirectDownload(url) {
+if (!url) return '';
+const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+if (driveMatch && driveMatch[1]) {
+return `https://drive.google.com/uc?export=download&id=${driveMatch[1]}`;
+}
+return url;
+}
+// Study Materials Table
+function renderMaterialsTable() {
+const courses = getCoursesData();
+const materials = getMaterialsData();
+const tbody = document.getElementById('materials-table-body');
+if (!tbody) return;
+tbody.innerHTML = courses.map(c => {
+const mat = materials.find(m => m.courseId === c.id);
+const isAdded = !!mat;
+const typeText = mat ? (mat.type || 'PDF') : '—';
+const viewText = mat && mat.viewUrl ? `<a href="${mat.viewUrl}" target="_blank" class="text-secondary hover:underline font-bold">View Link <span class="material-symbols-outlined text-[10px] align-middle">open_in_new</span></a>` : '<span class="text-slate-600">No View URL</span>';
+const processedDl = convertToDirectDownload(mat ? mat.downloadUrl : '');
+const dlText = processedDl ? `<a href="${processedDl}" target="_blank" download class="text-secondary hover:underline font-bold">Download Link <span class="material-symbols-outlined text-[10px] align-middle">download</span></a>` : '<span class="text-slate-600">No Download URL</span>';
+return `<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4 text-sm font-semibold text-on-surface max-w-xs">${c.name}</td>
+<td class="px-6 py-4 text-xs ${isAdded ? 'text-secondary' : 'text-slate-500'} font-label font-bold uppercase">${isAdded ? typeText : 'Not Added'}</td>
+<td class="px-6 py-4 text-xs text-on-surface-variant max-w-[220px]">
+<div class="truncate mb-1"><span class="text-slate-400">View:</span> ${isAdded ? viewText : '—'}</div>
+<div class="truncate"><span class="text-slate-400">DL:</span> ${isAdded ? dlText : '—'}</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button onclick="openEditMaterial('${c.id}')" class="p-2 rounded-lg border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-all" title="${isAdded ? 'Edit' : 'Add'}">
+<span class="material-symbols-outlined text-sm">${isAdded ? 'edit' : 'add'}</span>
+</button>
+${isAdded ? `<button onclick="deleteMaterial('${c.id}')" class="p-2 rounded-lg border border-error/30 text-error hover:bg-error/30 transition-all" title="Remove">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>` : ''}
+</div>
+</td>
+</tr>`;
+}).join('');
+}
+window.deleteMaterial = function(courseId) {
+if (!confirm('Remove study material for this course?')) return;
+let mats = getMaterialsData().filter(m => m.courseId !== courseId);
+saveMaterialsData(mats);
+renderMaterialsTable();
+showAdminToast('Study material removed.');
+};
+document.getElementById('add-material-btn')?.addEventListener('click', () => {
+const courses = getCoursesData();
+const select = document.getElementById('mat-course-id');
+select.innerHTML = '<option value="">-- Select Course --</option>' + courses.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+select.disabled = false;
+document.getElementById('mat-modal-title').textContent = 'Add Study Material';
+document.getElementById('mat-type').value = 'PDF';
+document.getElementById('mat-view-url').value = '';
+document.getElementById('mat-download-url').value = '';
+document.getElementById('material-modal').style.display = 'flex';
+});
+function openMatModal(courseId) {
+const courses = getCoursesData();
+const materials = getMaterialsData();
+const c = courses.find(x => x.id === courseId);
+const mat = materials.find(m => m.courseId === courseId) || { courseId, type:'PDF', viewUrl:'', downloadUrl:'' };
+if (mat.url && !mat.viewUrl && !mat.downloadUrl) {
+mat.viewUrl = mat.url;
+}
+const select = document.getElementById('mat-course-id');
+select.innerHTML = courses.map(course => `<option value="${course.id}">${course.name}</option>`).join('');
+select.value = courseId;
+select.disabled = true;
+document.getElementById('mat-modal-title').textContent = 'Edit Study Material';
+document.getElementById('mat-type').value = mat.type || 'PDF';
+document.getElementById('mat-view-url').value = mat.viewUrl || '';
+document.getElementById('mat-download-url').value = mat.downloadUrl || '';
+document.getElementById('material-modal').style.display = 'flex';
+}
+function closeMatModal() { document.getElementById('material-modal').style.display = 'none'; }
+window.openEditMaterial = openMatModal;
+document.getElementById('close-mat-modal-btn')?.addEventListener('click', closeMatModal);
+document.getElementById('material-modal')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeMatModal(); });
+document.getElementById('material-form')?.addEventListener('submit', e => {
+e.preventDefault();
+const courseId = document.getElementById('mat-course-id').value;
+let mats = getMaterialsData().filter(m => m.courseId !== courseId);
+mats.push({ 
+courseId, 
+type: document.getElementById('mat-type').value.trim(), 
+viewUrl: document.getElementById('mat-view-url').value.trim(),
+downloadUrl: document.getElementById('mat-download-url').value.trim()
+});
+saveMaterialsData(mats);
+closeMatModal();
+renderMaterialsTable();
+showAdminToast('Study material updated!');
+});
+// Modals Logic for Settings and Profile
+const settingsBtn = document.getElementById('admin-settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const closeSettingsBtn = document.getElementById('close-settings-modal');
+const settingsForm = document.getElementById('settings-form');
+const profileBtn = document.getElementById('admin-profile-btn');
+const profileModal = document.getElementById('profile-modal');
+const closeProfileBtn = document.getElementById('close-profile-modal');
+// State defaults
+let adminProfilePic = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAkn7SzaXQLsjjnQp5km36PwYc8-tj0toKVnBLHGRTeePlURNJcEZwbhNYZORbCptkZwB5BnMFs1irH0jU883JcmaieZQAJf5eqaYj7Rpt59fJVJOJi2Gju6fMdaBcjoKQv8i4IQO6HBpTWUEoeBorvXXpL6gaZhgiiJEbda9MWX0KUeJNE1-5KMo0qoobnhBnQvl70_kEwE1YFo5_2P_38yE_W5_4m7F0l28G2pSt0J5WpIjusr2ILxs2LvOYreyvpU37CZKJOtiCN';
+let adminClassName = 'SGCC (Shree Ganesh Computer Classes)';
+// Load saved credentials (set by Settings form)
+const savedCreds = JSON.parse(localStorage.getItem('sgcc_admin_creds') || '{}');
+let adminUsername = savedCreds.username || DEFAULT_USERNAME;
+let adminPassword = savedCreds.password || DEFAULT_PASSWORD;
+// Load other persisted state
+const loadedAdminState = JSON.parse(localStorage.getItem('sgcc_admin_state') || 'null');
+if (loadedAdminState) {
+adminProfilePic = loadedAdminState.profilePic || adminProfilePic;
+adminClassName   = loadedAdminState.className  || adminClassName;
+if(adminClassName === 'SGCC') adminClassName = 'SGCC (Shree Ganesh Computer Classes)';
+document.getElementById('admin-class-name-header').innerText = adminClassName;
+document.getElementById('admin-class-name-sidebar').innerText = 'Admin';
+document.getElementById('admin-profile-img-header').src = adminProfilePic;
+}
+// Update profile username display
+const profileUserEl = document.getElementById('profile-username-display');
+if (profileUserEl) profileUserEl.innerText = adminUsername;
+// Settings Modal
+settingsBtn?.addEventListener('click', () => {
+document.getElementById('set-class-name').value = adminClassName;
+document.getElementById('set-username').value = adminUsername;
+document.getElementById('set-password').value = adminPassword;
+settingsModal.style.display = 'flex';
+});
+closeSettingsBtn?.addEventListener('click', () => { settingsModal.style.display = 'none'; });
+settingsModal?.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.style.display = 'none'; });
+settingsForm?.addEventListener('submit', async (e) => {
+e.preventDefault();
+adminClassName = document.getElementById('set-class-name').value.trim() || 'SGCC (Shree Ganesh Computer Classes)';
+const newUser = document.getElementById('set-username').value.trim();
+const newPass = document.getElementById('set-password').value.trim();
+const credChanged = (newUser && newUser !== adminUsername) || (newPass && newPass !== adminPassword);
+if (newUser) adminUsername = newUser;
+if (newPass) adminPassword = newPass;
+// Save credentials to JSONBin (cloud) + localStorage (offline cache)
+localStorage.setItem('sgcc_admin_creds', JSON.stringify({ username: adminUsername, password: adminPassword }));
+if (credChanged) await saveCredentials(adminUsername, adminPassword);
+const fileInput = document.getElementById('set-profile-photo');
+const saveSettings = (picUrl) => {
+adminProfilePic = picUrl || adminProfilePic;
+localStorage.setItem('sgcc_admin_state', JSON.stringify({ profilePic: adminProfilePic, className: adminClassName }));
+document.getElementById('admin-class-name-header').innerText = adminClassName;
+document.getElementById('admin-class-name-sidebar').innerText = 'Admin';
+document.getElementById('admin-profile-img-header').src = adminProfilePic;
+const modalImg = document.getElementById('admin-profile-img-modal');
+if(modalImg) modalImg.src = adminProfilePic;
+const profileUserEl = document.getElementById('profile-username-display');
+if(profileUserEl) profileUserEl.innerText = adminUsername;
+settingsModal.style.display = 'none';
+if (credChanged && USE_JSONBIN) {
+showAdminToast('✅ Credentials synced to cloud — active on ALL browsers!');
+} else {
+showAdminToast('Settings saved!');
+}
+};
+if (fileInput.files && fileInput.files[0]) {
+const reader = new FileReader();
+reader.onload = function(ev) { saveSettings(ev.target.result); };
+reader.readAsDataURL(fileInput.files[0]);
+} else {
+saveSettings(adminProfilePic);
+}
+});
+// ===== NOTIFICATION MANAGER =====
+const notifForm = document.getElementById('notification-form');
+const notifEnabled = document.getElementById('notif-enabled');
+const notifText = document.getElementById('notif-text');
+const notifBtnText = document.getElementById('notif-btn-text');
+const notifBtnLink = document.getElementById('notif-btn-link');
+window.loadNotificationSettings = function() {
+const data = JSON.parse(localStorage.getItem('sgcc_notification') || '{"enabled":true,"text":"Free Demo Class - Book Now!","btnText":"Book Now","btnLink":"https://docs.google.com/forms/d/e/1FAIpQLSfHRBj5oj3v0EeX4cvOCfjl-lw6LnjI0Rp-eT_I3WgO0zg0dA/viewform?usp=publish-editor"}');
+notifEnabled.checked = data.enabled;
+notifText.value = data.text;
+notifBtnText.value = data.btnText;
+notifBtnLink.value = data.btnLink;
+};
+if (notifForm) {
+notifForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const data = {
+enabled: notifEnabled.checked,
+text: notifText.value,
+btnText: notifBtnText.value,
+btnLink: notifBtnLink.value
+};
+localStorage.setItem('sgcc_notification', JSON.stringify(data));
+showAdminToast('Notification settings saved.');
+});
+}
+// Profile Modal
+profileBtn?.addEventListener('click', () => {
+document.getElementById('admin-profile-img-modal').src = adminProfilePic;
+const profileUserEl = document.getElementById('profile-username-display');
+if(profileUserEl) profileUserEl.innerText = adminUsername;
+profileModal.style.display = 'flex';
+});
+closeProfileBtn?.addEventListener('click', () => { profileModal.style.display = 'none'; });
+profileModal?.addEventListener('click', e => { if (e.target === profileModal) profileModal.style.display = 'none'; });
+// Notifications Population
+const enquiries = JSON.parse(localStorage.getItem('sgcc_enquiries') || '[]');
+const notifBadge = document.getElementById('notif-badge');
+const notifList = document.getElementById('notif-list');
+if(enquiries && enquiries.length > 0 && notifBadge && notifList) {
+notifBadge.textContent = enquiries.length;
+notifBadge.classList.remove('hidden');
+notifList.innerHTML = enquiries.slice().reverse().slice(0, 5).map(eq => `
+<div class="p-3 hover:bg-white/5 transition-colors cursor-pointer" onclick="alert('Enquiry from: ' + '${eq.name}' + '\\nCourse: ' + '${eq.course}')">
+<p class="text-xs font-semibold text-on-surface">${eq.name}</p>
+<p class="text-[10px] text-on-surface-variant truncate">${eq.course}</p>
+<p class="text-[9px] text-primary mt-1">${eq.date || 'Recently'}</p>
+</div>
+`).join('');
+}
+});
+</script>
+</body></html>

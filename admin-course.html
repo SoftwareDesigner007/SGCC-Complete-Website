@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SGCC Admin - Course Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="./tailwind-config.js"></script>
+<link rel="stylesheet" href="./style.css" />
+<script src="./theme.js"></script>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen">
+<header class="fixed top-0 w-full z-50 flex items-center px-6 h-16 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_0_15px_rgba(0,255,204,0.1)]">
+<a href="./admin.html" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mr-6">
+<span class="material-symbols-outlined">arrow_back</span>
+<span class="font-headline font-bold text-sm tracking-wider uppercase">Back</span>
+</a>
+<span class="text-xl md:text-2xl font-black text-primary drop-shadow-[0_0_8px_var(--color-primary)] font-['Sora'] tracking-tight truncate">Course Editor</span>
+</header>
+<main class="px-6 py-24 md:px-10 md:py-32 max-w-3xl mx-auto">
+<div class="glass-card w-full p-8 rounded-2xl shadow-[0_0_40px_rgba(255,45,120,0.2)]">
+<h1 id="page-title" class="text-3xl font-bold font-headline text-primary mb-8">Add New Course</h1>
+<form id="course-form" class="space-y-6">
+<input type="hidden" id="course-id">
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Course Name *</label>
+<input id="cf-name" type="text" required class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Web Development">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Category *</label>
+<input id="cf-category" type="text" required class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Programming">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Duration *</label>
+<input id="cf-duration" type="text" required class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. 6 Months">
+</div>
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Badge Label</label>
+<input id="cf-badge" type="text" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors" placeholder="e.g. Beginner, Advanced">
+</div>
+<div>
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant mb-2 block">Description</label>
+<textarea id="cf-description" rows="4" class="w-full bg-surface-container border border-outline-variant px-5 py-3 text-on-surface text-sm outline-none focus:border-primary transition-colors resize-none" placeholder="Short course description..."></textarea>
+</div>
+<div class="flex gap-4 pt-4">
+<a href="./admin.html" class="flex-1 py-4 text-center border border-outline-variant text-on-surface-variant font-headline font-bold text-sm uppercase tracking-widest hover:border-primary transition-all">Cancel</a>
+<button type="submit" class="flex-1 py-4 bg-primary text-on-primary font-headline font-bold text-sm uppercase tracking-widest hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all">Save Course</button>
+</div>
+</form>
+</div>
+</main>
+<script>
+// Check Admin Auth
+if (sessionStorage.getItem('sgcc_admin_auth') !== 'true') {
+window.location.href = './admin.html';
+}
+const storedState = JSON.parse(localStorage.getItem('sgcc_admin_state') || 'null');
+const DEFAULT_COURSES = [
+{ id:'c1', name:"MKCL'S MSCIT", category:"Certified Programs", duration:"6 Months", badge:"Premium", description:"Flagship digital literacy certification by MKCL. Essential computer skills for academic and professional success.", icon:"verified", color:"tertiary" },
+{ id:'c2', name:"Diploma in IT Hardware & Networking", category:"Hardware & Networking", duration:"1 Year", badge:"Practical", description:"Comprehensive training in PC assembly, troubleshooting, server management, and secure network infrastructure design.", icon:"settings_input_component", color:"secondary" },
+{ id:'c3', name:"Web Designing & Web Development", category:"Programming", duration:"4 Months", badge:"Beginner to Pro", description:"Build dynamic, responsive web applications using modern HTML, CSS, JavaScript, and contemporary web frameworks.", icon:"code", color:"primary" },
+{ id:'c4', name:"Graphic Designing", category:"Design & Creative", duration:"4 Months", badge:"Beginner", description:"Master industry-standard tools for visual communication, branding, typography, and stunning graphic creation.", icon:"palette", color:"primary" },
+{ id:'c5', name:"UI UX Designing", category:"Design & Creative", duration:"1 Year", badge:"Intermediate", description:"Design beautiful, user-centric interfaces. Master wireframing, prototyping, user research, and modern design systems.", icon:"draw", color:"secondary" },
+{ id:'c6', name:"Basics of Computer", category:"Fundamentals", duration:"2 Months", badge:"Beginner", description:"Learn fundamental computer operations, OS usage, file management, and essential internet navigation skills.", icon:"computer", color:"tertiary" },
+{ id:'c7', name:"Computer Fundamentals", category:"Fundamentals", duration:"6 Months", badge:"Beginner", description:"Deep dive into computer architecture, system software usage, and core IT concepts for complete beginners.", icon:"desktop_windows", color:"primary" },
+{ id:'c8', name:"Office Automation", category:"Office Automation", duration:"1 Year", badge:"Corporate", description:"Master MS Word, Excel, PowerPoint, and modern office tools for workplace productivity and professional documentation.", icon:"table_chart", color:"secondary" },
+{ id:'c9', name:"Financial Accounting with Tally ERP", category:"Finance", duration:"6 Months", badge:"Skill Based", description:"Advanced accounting, inventory management, and comprehensive financial reporting with professional GST filing.", icon:"account_balance", color:"tertiary" },
+{ id:'c10', name:"Marathi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"Master touch typing in Marathi using AI-driven methods. Achieve high speed and accuracy for professional exams.", icon:"keyboard", color:"primary" },
+{ id:'c11', name:"English and Hindi Typing with Advanced Methods and AI", category:"Typing", duration:"6 Months", badge:"Essential", description:"High-speed English and Hindi typing training with advanced AI techniques designed for government and corporate roles.", icon:"keyboard", color:"secondary" },
+{ id:'c12', name:"Basics of C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"1 Year", badge:"Beginner", description:"Build a strong foundation in core programming concepts across multiple essential and modern development languages.", icon:"terminal", color:"tertiary" },
+{ id:'c13', name:"Advance in C, C++, C#, Java, Python, Kotlin Programming", category:"Programming", duration:"2 Years", badge:"Advanced", description:"Master advanced programming techniques, complex data structures, and robust enterprise-grade software development.", icon:"integration_instructions", color:"primary" },
+{ id:'c14', name:"Prompt Engineering and Generative AI", category:"AI & Future Skills", duration:"1 Year", badge:"Advanced", description:"Master LLMs, precision prompt crafting, and generative AI tools to automate workflows and enhance creative productivity.", icon:"psychology", color:"secondary" },
+{ id:'c15', name:"Digital Marketing with AI", category:"Marketing", duration:"5 Years", badge:"Strategy", description:"Dominate SEO, SMM, and dynamic content strategy utilizing cutting-edge AI-powered marketing tools for rapid brand growth.", icon:"trending_up", color:"tertiary" }
+];
+function getCoursesData() {
+const s = localStorage.getItem('sgcc_courses');
+if (s) return JSON.parse(s);
+return DEFAULT_COURSES;
+}
+function saveCoursesData(data) {
+localStorage.setItem('sgcc_courses', JSON.stringify(data));
+}
+document.addEventListener('DOMContentLoaded', () => {
+const urlParams = new URLSearchParams(window.location.search);
+const courseId = urlParams.get('id');
+const pageTitle = document.getElementById('page-title');
+if (courseId) {
+pageTitle.textContent = 'Edit Course';
+const courses = getCoursesData();
+const course = courses.find(c => c.id === courseId);
+if (course) {
+document.getElementById('course-id').value = course.id;
+document.getElementById('cf-name').value = course.name;
+document.getElementById('cf-category').value = course.category;
+document.getElementById('cf-duration').value = course.duration;
+document.getElementById('cf-badge').value = course.badge;
+document.getElementById('cf-description').value = course.description;
+} else {
+alert('Course not found!');
+window.location.href = './admin.html';
+}
+}
+document.getElementById('course-form').addEventListener('submit', e => {
+e.preventDefault();
+const id = document.getElementById('course-id').value;
+let data = getCoursesData();
+const entry = {
+id: id || 'c' + Date.now(),
+name: document.getElementById('cf-name').value.trim(),
+category: document.getElementById('cf-category').value.trim(),
+duration: document.getElementById('cf-duration').value.trim(),
+badge: document.getElementById('cf-badge').value.trim(),
+description: document.getElementById('cf-description').value.trim(),
+icon: 'school', 
+color: 'primary'
+};
+if (id) {
+const existing = data.find(c => c.id === id);
+if (existing) { 
+entry.icon = existing.icon; 
+entry.color = existing.color; 
+}
+data = data.map(c => c.id === id ? entry : c);
+} else {
+data.push(entry);
+}
+saveCoursesData(data);
+window.location.href = './admin.html';
+});
+});
+</script>
+</body>
+</html>

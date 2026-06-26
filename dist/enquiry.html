@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════
+     SGCC — Enquiry Form Page
+     Full enquiry submission form with all fields: name, email,
+     phone, course selection, and message.
+     
+     URL Parameter: ?course=<encoded-course-name>
+     If this parameter is present, the course dropdown is
+     automatically pre-selected (set by "Enquire Now" buttons
+     on courses.html). This logic lives in the inline <script>
+     at the bottom of this file.
+     
+     On submit: saves enquiry to localStorage as 'sgcc_enquiries'
+     and shows a confirmation toast via main.js.
+     ═══════════════════════════════════════════════════════ -->
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>Enquiry | SGCC - Shree Ganesh Computer Classes</title>
+<meta name="description" content="Shree Ganesh Computer Classes (SGCC) - Empowering Mumbai since 2004. Offering expert training in MS-CIT, Web Development, UI/UX, Programming, Tally, and AI technologies.">
+<meta name="keywords" content="Computer classes in Bandra, MS-CIT course Mumbai, Web Development course, UI UX Design classes, Programming courses, Tally classes Mumbai, SGCC, AI and Digital Marketing">
+<meta property="og:title" content="SGCC - Shree Ganesh Computer Classes">
+<meta property="og:description" content="Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SGCC - Shree Ganesh Computer Classes">
+<meta name="twitter:description" content="Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://lh3.googleusercontent.com">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800&family=Inter:wght@400;500;600&family=Space_Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<script src="./tailwind-config.js"></script>
+<script src="./theme.js"></script>
+  <script type="module" crossorigin src="/assets/main-BCCjS8TC.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-ChDKmW2p.css">
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 grid-bg min-h-screen">
+<nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_4_20px_rgba(0,0,0,0.5)] transition-all duration-300">
+<div class="flex justify-between items-center px-4 md:px-6 lg:px-8 2xl:px-16 py-4 w-full max-w-screen-2xl mx-auto gap-4">
+<div class="flex items-center gap-2 xl:gap-3 shrink-0">
+<a href="/index.html" class="flex items-center gap-2 xl:gap-3 cursor-pointer">
+<img src="/assets/logo-EYtvj6OI.png" fetchpriority="high" alt="SGCC Logo" class="h-14 xl:h-16 w-auto object-contain rounded-xl drop-shadow-[0_0_12px_rgba(0,255,209,0.5)] shadow-[0_0_20px_rgba(255,179,71,0.25)] border border-secondary/20 hover:border-secondary/50 hover:shadow-[0_0_30px_rgba(0,255,209,0.4)] hover:scale-105 transition-all duration-300">
+<div class="flex flex-col leading-tight whitespace-nowrap">
+<span class="text-xl sm:text-2xl md:text-3xl font-headline font-extrabold tracking-tight" style="background: linear-gradient(90deg, #ffe04a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SGCC</span>
+<span class="text-[11px] sm:text-xs md:text-sm font-label font-semibold tracking-wider text-on-surface-variant uppercase mt-1 hidden sm:block">Shree Ganesh Computer Classes</span>
+</div>
+</a>
+</div>
+<div class="hidden lg:flex flex-1 justify-center items-center gap-4 xl:gap-6 2xl:gap-8">
+<a class="nav-link whitespace-nowrap text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95 text-sm xl:text-base" href="/index.html">Home</a>
+<a class="nav-link whitespace-nowrap text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95 text-sm xl:text-base" href="/courses.html">Courses</a>
+<a class="nav-link whitespace-nowrap text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95 text-sm xl:text-base" href="/study-material.html">Study Material</a>
+<a class="nav-link whitespace-nowrap text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95 text-sm xl:text-base" href="/about.html">About Us</a>
+<a class="nav-link whitespace-nowrap text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95 text-sm xl:text-base" href="/contact.html">Contact Us</a>
+</div>
+<div class="flex items-center gap-3 xl:gap-4 2xl:gap-6 shrink-0">
+<button id="theme-toggle" class="theme-toggle-pill shrink-0" aria-label="Toggle Theme">
+<span class="theme-toggle-track"><span class="theme-toggle-stars"><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span></span><span class="theme-toggle-sun-rays"></span></span>
+<span class="theme-toggle-thumb"><span class="material-symbols-outlined theme-toggle-sun">wb_sunny</span><span class="material-symbols-outlined theme-toggle-moon">nights_stay</span></span>
+</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 md:pt-40 pb-20 px-6 max-w-4xl mx-auto min-h-screen flex flex-col">
+<div class="w-full bg-surface-container border border-outline/50 p-8 md:p-12 rounded-2xl relative overflow-hidden shadow-[0_0_30px_rgba(255,45,120,0.1)] my-auto hover:shadow-[0_0_40px_rgba(255,45,120,0.15)] transition-shadow duration-500">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none animate-pulse" style="animation-duration: 4s;"></div>
+<header class="mb-10 text-center">
+<h1 class="text-4xl md:text-5xl font-headline font-black text-on-surface mb-4 tracking-tighter">
+Course <span class="text-primary neon-glow-text">Enquiry</span>
+</h1>
+<p class="text-on-surface-variant font-body">
+Fill out your details below and our team will get back to you shortly with more information.
+</p>
+</header>
+<form id="enquiry-form" class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-label uppercase text-on-surface-variant tracking-widest px-1">Full Name</label>
+<input required id="enquiry-name" class="w-full bg-surface-dim border-none border-b-2 border-outline/50 focus:border-primary focus:ring-0 text-on-surface rounded-none transition-all placeholder:text-on-surface-variant/30" placeholder="John Doe" type="text" />
+</div>
+<div class="space-y-2">
+<label class="text-xs font-label uppercase text-on-surface-variant tracking-widest px-1">Email Address</label>
+<input required id="enquiry-email" class="w-full bg-surface-dim border-none border-b-2 border-outline/50 focus:border-primary focus:ring-0 text-on-surface rounded-none transition-all placeholder:text-on-surface-variant/30" placeholder="john@example.com" type="email" />
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-label uppercase text-on-surface-variant tracking-widest px-1">Phone Number (Optional)</label>
+<input id="enquiry-phone" class="w-full bg-surface-dim border-none border-b-2 border-outline/50 focus:border-primary focus:ring-0 text-on-surface rounded-none transition-all placeholder:text-on-surface-variant/30" placeholder="+91 XXXXX XXXXX" type="tel" />
+</div>
+<div class="space-y-2">
+<label class="text-xs font-label uppercase text-on-surface-variant tracking-widest px-1">Interested Course</label>
+<select id="enquiry-course" class="w-full bg-surface-dim border-none border-b-2 border-outline/50 focus:border-primary focus:ring-0 text-on-surface rounded-none transition-all">
+<option value="" disabled selected>Select a course</option>
+<option value="mscit">MKCL's MS-CIT</option>
+<option value="hardware">Diploma in IT Hardware & Networking</option>
+<option value="web">Web Designing & Web Development</option>
+<option value="graphic">Graphic Designing</option>
+<option value="uiux">UI UX Designing</option>
+<option value="basics">Basics of Computer</option>
+<option value="fundamentals">Computer Fundamentals</option>
+<option value="office">Office Automation</option>
+<option value="tally">Financial Accounting with Tally ERP</option>
+<option value="marathi_typing">Marathi Typing with Advanced Methods and AI</option>
+<option value="eng_hin_typing">English and Hindi Typing with Advanced Methods and AI</option>
+<option value="prog_basic">Basics of C, C++, C#, Java, Python, Kotlin Programming</option>
+<option value="prog_adv">Advance in C, C++, C#, Java, Python, Kotlin Programming</option>
+<option value="ai">Prompt Engineering and Generative AI</option>
+<option value="marketing">Digital Marketing with AI</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-label uppercase text-on-surface-variant tracking-widest px-1">Message / Additional Questions</label>
+<textarea id="enquiry-message" class="w-full bg-surface-dim border-none border-b-2 border-outline/50 focus:border-primary focus:ring-0 text-on-surface rounded-none transition-all placeholder:text-on-surface-variant/30" placeholder="How can we help you today?" rows="4"></textarea>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary font-headline font-bold rounded-lg hover:neon-glow-pink transition-all duration-300 transform active:scale-[0.98] uppercase tracking-widest mt-8" type="submit">
+Submit Enquiry
+</button>
+</form>
+</div>
+</main>
+<footer class="bg-background border-t border-secondary/30 py-12 px-6 md:px-12 lg:px-20">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="space-y-4">
+<div class="text-lg font-bold text-tertiary font-headline">SGCC</div>
+<p class="font-['Inter'] text-sm text-on-surface-variant leading-relaxed">
+Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.
+</p>
+<div class="flex gap-4 pt-2">
+<a href="https://earth.google.com/web/search/Church+Of+St%2e+Joseph+The+Worker,+B-9,+next+to+Cardinal+School,+Subhash+Nagar,+Bandra+East,+Mumbai,+Maharashtra+400051/@19.06669428,72.84752296,19.59091956a,200.35027466d,35y,0h,0t,0r/data=CuYBGrcBErABCiUweDNiZTdjOTFjNWM4Njc2Y2Q6MHg0YjI4MzNjNjBiMzQzNDQ4Gb_v37w4ETNAIeFDiZY8NlJAKnVDaHVyY2ggT2YgU3QuIEpvc2VwaCBUaGUgV29ya2VyLCBCLTksIG5leHQgdG8gQ2FyZGluYWwgU2Nob29sLCBTdWJoYXNoIE5hZ2FyLCBCYW5kcmEgRWFzdCwgTXVtYmFpLCBNYWhhcmFzaHRyYSA0MDAwNTEYASABIiYKJAnIj-MTxsY8QBEl9QGsOIYowBkDpLkCBR5VQCE-7ehzeEI8wEICCAE6AwoBMEICCABKDQj___________8BEAA?authuser=0" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-primary hover:border-primary hover:text-on-primary hover:shadow-[0_0_15px_rgba(255,26,107,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Location on Google Earth">
+<span class="material-symbols-outlined text-[20px]">public</span>
+</a>
+<a href="https://mail.google.com/mail/?view=cm&fs=1&to=sgccbandra@gmail.com" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-secondary hover:border-secondary hover:text-on-secondary hover:shadow-[0_0_15px_rgba(0,255,204,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Email Us">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</a>
+<a href="https://wa.me/918898919457" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:border-[#25D366] hover:text-white hover:shadow-[0_0_15px_rgba(37,211,102,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Chat on WhatsApp">
+<span class="material-symbols-outlined text-[20px]">call</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="courses.html">Courses</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="contact.html">Bandra East Campus</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block cursor-pointer" onclick="openFaqModal(event)">FAQ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Legal</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="privacy.html">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="terms.html">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Contact Us</h4>
+<p class="font-['Inter'] text-sm text-on-surface-variant mb-4">Church Of St. Joseph The Worker, B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai, Maharashtra 400051</p>
+<div class="bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+<p class="text-[10px] uppercase font-label text-on-surface-variant tracking-widest mb-1">Support Line</p>
+<p class="text-secondary font-headline font-bold">+91 88989 19457 / 82866 13019</p>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center">
+<p class="font-['Inter'] text-sm text-on-surface-variant">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
+</div>
+</footer>
+<script>
+// Check URL for course parameter and pre-fill form
+document.addEventListener('DOMContentLoaded', () => {
+// Dynamically populate courses from Admin Dashboard
+const storedCourses = localStorage.getItem('sgcc_courses');
+const select = document.getElementById('enquiry-course');
+if (storedCourses && select) {
+const courses = JSON.parse(storedCourses);
+let optionsHtml = '<option value="" disabled selected>Select a course</option>';
+courses.forEach(c => {
+optionsHtml += `<option value="${c.id}">${c.name}</option>`;
+});
+select.innerHTML = optionsHtml;
+}
+const params = new URLSearchParams(window.location.search);
+const courseParam = params.get('course');
+if(courseParam) {
+const select = document.getElementById('enquiry-course');
+const options = Array.from(select.options);
+// Decode the course param
+const decodedParam = decodeURIComponent(courseParam).toLowerCase().replace(/['’\s-]/g, '');
+options.forEach(opt => {
+const optText = opt.text.toLowerCase().replace(/['’\s-]/g, '');
+if (optText && (optText === decodedParam || decodedParam.includes(optText) || optText.includes(decodedParam))) {
+opt.selected = true;
+}
+});
+}
+});
+</script>
+
+<!-- FAQ Modal -->
+<div id="faq-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+  <div class="bg-surface-container glass-card p-6 md:p-10 rounded-2xl max-w-2xl w-full mx-4 border border-outline/30 relative max-h-[85vh] overflow-y-auto">
+    <button onclick="closeFaqModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
+    <h3 class="text-3xl font-headline font-bold text-on-surface mb-6 flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary text-4xl">live_help</span>
+      Frequently Asked Questions
+    </h3>
+    <div class="space-y-4">
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          What courses do you offer?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We offer a wide range of courses including MS-CIT, Tally Prime, Web Development, Graphic Design, Python, Advanced Programming, and Digital Marketing.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Where is the campus located?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We are located at B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai. It's a quick 2-minute walk from Bandra Colony metro station!
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          How do I enroll in a course?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          You can enroll by visiting our Bandra East campus in person, or by filling out the online Enquiry form. Our staff will guide you through the process.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Are your classrooms air-conditioned?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Yes, we provide fully air-conditioned modern computer labs to ensure a comfortable and productive learning environment for all students.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Do you provide certificates?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Absolutely! Upon successful completion of your course and relevant exams, you will receive an industry-recognized certificate (e.g., from MKCL for MS-CIT).
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+</body>
+</html>

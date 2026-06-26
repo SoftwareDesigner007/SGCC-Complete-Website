@@ -1,0 +1,436 @@
+/**
+ * style.css — SGCC Custom Styles & Design Token System
+ * ──────────────────────────────────────────────────────
+ * This file works alongside Tailwind CSS (tailwind-config.js).
+ * Tailwind handles spacing, layout, and typography utility classes.
+ * This file handles:
+ *   1. CSS custom properties (design tokens) for the color system
+ *   2. Dark/light theme switching via the .dark class on <html>
+ *   3. Custom component classes not achievable with Tailwind alone
+ *
+ * THEMING SYSTEM:
+ * ─────────────────
+ * All colors are defined as CSS variables (--color-*) following
+ * Material Design 3 naming conventions. There are two sets:
+ *
+ *   :root         → Light theme colors (default)
+ *   .dark :root   → Dark theme colors (activated by theme.js)
+ *
+ * Tailwind reads these variables via tailwind-config.js, so using
+ * class names like bg-primary, text-secondary etc. automatically
+ * pick up the correct color for the current theme.
+ *
+ * COLOR PALETTE:
+ * ─────────────────
+ *   Primary   → Neon Pink / Deep Rose    (#FF2D78 dark / #D8005A light)
+ *   Secondary → Neon Cyan / Teal         (#00FFCC dark / #00A68A light)
+ *   Tertiary  → Neon Gold / Amber        (#FFE04A dark / #C29000 light)
+ *   Surface   → Layered dark backgrounds (#0A0A12 base in dark mode)
+ */
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 1: LIGHT THEME TOKENS (default, :root)
+   Applied when there is NO .dark class on <html>.
+   ══════════════════════════════════════════════════════════ */
+:root {
+    /* Light Theme - Enhanced Premium UI */
+    --color-background: #FDFBFF;
+
+    --color-on-background: #1A1A24;
+    --color-surface: #FFFFFF;
+    --color-surface-dim: #F5F3F7;
+    --color-surface-bright: #FFFFFF;
+    --color-surface-container-lowest: #FFFFFF;
+    --color-surface-container-low: #FAFAFD;
+    --color-surface-container: #F5F3F7;
+    --color-surface-container-high: #EBE8EF;
+    --color-surface-container-highest: #E0DBE3;
+    --color-on-surface: #1A1A24;
+    --color-on-surface-variant: #49454F;
+    --color-outline: #79747E;
+    --color-outline-variant: #CAC4D0;
+    --color-primary: #D8005A;
+    --color-on-primary: #FFFFFF;
+    --color-primary-container: #FFD9E2;
+    --color-on-primary-container: #3E0016;
+    --color-secondary: #00A68A;
+    --color-on-secondary: #FFFFFF;
+    --color-secondary-container: #B4FFF0;
+    --color-on-secondary-container: #00382D;
+    --color-tertiary: #C29000;
+    --color-on-tertiary: #FFFFFF;
+    --color-tertiary-container: #FFE082;
+    --color-on-tertiary-container: #3D2D00;
+    --color-error: #BA1A1A;
+    --color-on-error: #FFFFFF;
+    --color-error-container: #FFDAD6;
+    --color-on-error-container: #410002;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 2: LIGHT THEME — GLOBAL STYLE OVERRIDES
+   Extra styles applied in light mode to enhance the premium look.
+   Uses glass morphism effects on cards and the navigation bar.
+   ══════════════════════════════════════════════════════════ */
+/* Light mode: soft gradient background */
+html:not(.dark) body {
+    background-image: radial-gradient(circle at top right, #fff0f5, #fdfbff 40%, #f5f3f7 100%);
+    background-attachment: fixed;
+}
+
+html:not(.dark) .glass-card, 
+html:not(.dark) [class*="bg-surface-container"]:not(nav):not(footer):not(body) {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 12px 40px rgba(216, 0, 90, 0.05) !important;
+    backdrop-filter: blur(16px) saturate(180%);
+}
+
+html:not(.dark) nav {
+    background: rgba(253, 251, 255, 0.85) !important;
+    border-bottom: 1px solid rgba(216, 0, 90, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+}
+
+html:not(.dark) .grid-bg {
+    background-image: radial-gradient(rgba(216, 0, 90, 0.08) 1px, transparent 1px) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 3: DARK THEME TOKENS
+   Applied when the <html> element has the class .dark
+   (toggled by theme.js). All --color-* variables are redefined
+   here with vibrant neon values for the cyberpunk dark look.
+   ══════════════════════════════════════════════════════════ */
+.dark {
+    /* Dark Theme - Neon Cyberpunk Palette */
+    --color-background: #05050A;
+    --color-on-background: #FFFFFF;
+    --color-surface: #0f0f1a;
+    --color-surface-dim: #0f0f1a;
+    --color-surface-bright: #1a1a2e;
+    --color-surface-container-lowest: #05050A;
+    --color-surface-container-low: #0A0A10;
+    --color-surface-container: #11111A;
+    --color-surface-container-high: #1e1e30;
+    --color-surface-container-highest: #242436;
+    --color-on-surface: #FFFFFF;
+    --color-on-surface-variant: #E0DBE8;
+    --color-outline: #5a5068;
+    --color-outline-variant: #302840;
+    --color-primary: #FF1A6B;
+    --color-on-primary: #1a0010;
+    --color-primary-container: #4A001F;
+    --color-on-primary-container: #ffe0ec;
+    --color-secondary: #00FFD1;
+    --color-on-secondary: #001a1a;
+    --color-secondary-container: #004d3d;
+    --color-on-secondary-container: #c0fff4;
+    --color-tertiary: #ffe04a;
+    --color-on-tertiary: #1a1000;
+    --color-tertiary-container: #665200;
+    --color-on-tertiary-container: #fff0c0;
+    --color-error: #ff4444;
+    --color-on-error: #1a0000;
+    --color-error-container: #3d0f0f;
+    --color-on-error-container: #ffa0a0;
+}
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.neon-glow-primary {
+    text-shadow: 0 0 8px var(--color-primary);
+}
+
+.neon-glow-secondary {
+    text-shadow: 0 0 8px var(--color-secondary);
+}
+
+.neon-glow-tertiary {
+    text-shadow: 0 0 8px #ffe04a;
+}
+
+.glass-card {
+    background: var(--color-surface-container-high);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--color-primary);
+    opacity: 0.8;
+}
+
+.scanline-bg {
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.06));
+    background-size: 100% 4px, 3px 100%;
+}
+
+/* Shine sweep animation for feature cards */
+@keyframes shine-sweep {
+    0%   { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+    30%  { opacity: 1; }
+    100% { transform: translateX(200%) skewX(-15deg); opacity: 0; }
+}
+
+/* Re-trigger shine on every hover by resetting child animation */
+.group:hover .absolute > div[style*="shine-sweep"] {
+    animation: shine-sweep 0.7s ease forwards;
+}
+
+/* ── Premium Theme Toggle Pill ── */
+.theme-toggle-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 64px;
+    height: 32px;
+    border-radius: 999px;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+    outline: none;
+    background: transparent;
+    transition: none;
+}
+.theme-toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease, border-color 0.4s ease;
+    border: 1.5px solid rgba(255,255,255,0.18);
+}
+html.dark .theme-toggle-track {
+    background: linear-gradient(135deg, #1a1030 0%, #0f0f1a 100%);
+    box-shadow: 0 0 0 1px rgba(255,26,107,0.35), 0 0 12px rgba(255,26,107,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    border-color: rgba(255,26,107,0.3);
+}
+html:not(.dark) .theme-toggle-track {
+    background: linear-gradient(135deg, #ffe5f0 0%, #fff7e0 100%);
+    box-shadow: 0 0 0 1px rgba(216,0,90,0.2), 0 0 12px rgba(255,195,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
+    border-color: rgba(216,0,90,0.2);
+}
+.theme-toggle-thumb {
+    position: absolute;
+    top: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: left 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.4s ease, box-shadow 0.4s ease;
+    z-index: 1;
+}
+html.dark .theme-toggle-thumb {
+    left: 35px;
+    background: radial-gradient(circle at 35% 35%, #4a3070, #1a0030);
+    box-shadow: 0 0 10px rgba(255,26,107,0.7), 0 2px 6px rgba(0,0,0,0.5);
+}
+html:not(.dark) .theme-toggle-thumb {
+    left: 3px;
+    background: radial-gradient(circle at 40% 35%, #fffbe0, #ffcc00);
+    box-shadow: 0 0 14px rgba(255,200,0,0.8), 0 2px 6px rgba(0,0,0,0.15);
+}
+.theme-toggle-sun,
+.theme-toggle-moon {
+    position: absolute;
+    font-size: 14px !important;
+    line-height: 1;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+.theme-toggle-sun {
+    color: #ff9900;
+}
+.theme-toggle-moon {
+    color: #c0a0ff;
+}
+html.dark .theme-toggle-sun { opacity: 0; transform: scale(0.5) rotate(90deg); }
+html.dark .theme-toggle-moon { opacity: 1; transform: scale(1) rotate(0deg); }
+html:not(.dark) .theme-toggle-sun { opacity: 1; transform: scale(1) rotate(0deg); }
+html:not(.dark) .theme-toggle-moon { opacity: 0; transform: scale(0.5) rotate(-90deg); }
+
+.theme-toggle-stars {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+html.dark .theme-toggle-stars { opacity: 1; }
+html:not(.dark) .theme-toggle-stars { opacity: 0; }
+.theme-toggle-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle 2s infinite;
+}
+.theme-toggle-star:nth-child(1) { top: 6px; left: 8px; animation-delay: 0s; }
+.theme-toggle-star:nth-child(2) { top: 16px; left: 14px; width: 3px; height: 3px; animation-delay: 0.5s; }
+.theme-toggle-star:nth-child(3) { top: 9px; left: 22px; animation-delay: 1s; }
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.4); }
+}
+.theme-toggle-sun-rays {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+html.dark .theme-toggle-sun-rays { opacity: 0; }
+html:not(.dark) .theme-toggle-sun-rays { opacity: 1; }
+.sun-ray {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 28px;
+    height: 1.5px;
+    background: linear-gradient(to right, rgba(255,200,0,0.7), transparent);
+    transform-origin: left center;
+    animation: ray-spin 8s linear infinite;
+}
+@keyframes ray-spin {
+    from { transform: rotate(var(--r)) translateX(0); }
+    to { transform: rotate(calc(var(--r) + 360deg)) translateX(0); }
+}
+/* Hover glow pulse */
+.theme-toggle-pill:hover .theme-toggle-track {
+    transition: box-shadow 0.2s ease;
+}
+html.dark .theme-toggle-pill:hover .theme-toggle-track {
+    box-shadow: 0 0 0 1px rgba(255,26,107,0.5), 0 0 20px rgba(255,26,107,0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+html:not(.dark) .theme-toggle-pill:hover .theme-toggle-track {
+    box-shadow: 0 0 0 1px rgba(216,0,90,0.3), 0 0 20px rgba(255,195,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+/* ── Neon Glow Text Utility ── */
+.neon-glow-text {
+    text-shadow: 0 0 8px currentColor;
+}
+
+/* ── Grid Background Utility ── */
+.grid-bg {
+    background-image: radial-gradient(rgba(255, 45, 120, 0.1) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+html:not(.dark) .grid-bg {
+    background-image: radial-gradient(rgba(216, 0, 90, 0.08) 1px, transparent 1px);
+}
+
+/* ── Glass Panel (used on About page) ── */
+.glass-panel {
+    background: var(--color-surface-container-high);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-outline-variant);
+}
+
+/* ── Neon Border Utilities (used on About and Contact pages) ── */
+.neon-border-cyan {
+    border: 1px solid var(--color-secondary);
+    box-shadow: 0 0 10px rgba(0, 255, 209, 0.2);
+}
+.neon-border-pink {
+    border: 1px solid var(--color-primary);
+    box-shadow: 0 0 10px rgba(255, 26, 107, 0.2);
+}
+
+/* Premium Re-triggerable Shine Sweep Animation */
+.shine-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 5;
+}
+.shine-element {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-20deg);
+}
+.group:hover .shine-element {
+    animation: shine-sweep-new 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes shine-sweep-new {
+    0% {
+        left: -150%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   PERMANENT FIX: Right-side element interaction bug
+   ──────────────────────────────────────────────────────────
+   THE REAL ROOT CAUSE:
+   The chatbot outer container (div.fixed.top-28.right-8.z-50)
+   had NO pointer-events:none. This created an invisible ~370px
+   wide rectangle floating over the RIGHT side of every section
+   at z-index:50. Even though the chat window itself had
+   pointer-events:none when hidden, the PARENT div was still
+   intercepting all mouse events in that rectangle, making the
+   rightmost column cards (Placement Ready, Epic Trips, UI/UX,
+   Cyber Security, Access Resources button etc.) completely
+   unresponsive at 100% browser zoom.
+   
+   At 80% zoom the layout compresses so the overlap is reduced
+   enough that cards partially respond — explaining why it
+   "worked" at 80% but not 100%.
+
+   FIXED BY:
+   1. pointer-events:none on the outer chat container div (inline)
+   2. pointer-events:auto restored on FAB button and chat window (inline)
+   3. CSS below reinforces these rules so they survive any DOM changes
+   ══════════════════════════════════════════════════════════ */
+
+/* Page scroll guard: use overflow-x:clip so fixed elements
+   (nav, chatbot) are never clipped by overflow scrolling */
+#page-scroll-guard {
+    overflow-x: clip !important;
+    position: relative;
+}
+
+/* Reinforce: chatbot outer container MUST NOT intercept pointer events */
+#fab-chat-btn,
+#sgcc-chat-window {
+    pointer-events: auto !important;
+}
+
+/* When chat window is hidden, it blocks nothing */
+#sgcc-chat-window.hidden-chat {
+    pointer-events: none !important;
+}
+
+/* Ensure all decorative background blobs can never steal clicks */
+section > .absolute:not([onclick]):not([role]):not(button):not(a),
+.scanline-bg {
+    pointer-events: none !important;
+}
+
+/* Hoverable cards: GPU compositing for reliable hit-testing at any zoom */
+.glass-card[style*="will-change"],
+.cat-box[style*="will-change"],
+.course-card[style*="will-change"],
+div[onclick][style*="will-change"],
+a[href][style*="will-change"] {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}

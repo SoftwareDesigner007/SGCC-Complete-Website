@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>SGCC – Shree Ganesh Computer Classes | Ignite Skills. Shape Futures.</title>
+<meta name="description" content="Shree Ganesh Computer Classes (SGCC) - Empowering Mumbai since 2004. Offering expert training in MS-CIT, Web Development, UI/UX, Programming, Tally, and AI technologies.">
+<meta name="keywords" content="Computer classes in Bandra, MS-CIT course Mumbai, Web Development course, UI UX Design classes, Programming courses, Tally classes Mumbai, SGCC, AI and Digital Marketing">
+<meta property="og:title" content="SGCC - Shree Ganesh Computer Classes">
+<meta property="og:description" content="Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SGCC - Shree Ganesh Computer Classes">
+<meta name="twitter:description" content="Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://lh3.googleusercontent.com">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link
+href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap"
+rel="stylesheet" />
+<link
+href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+rel="stylesheet" />
+<script src="./tailwind-config.js"></script>
+<link rel="stylesheet" href="./style.css" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="./theme.js"></script>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-white overflow-x-hidden">
+<div id="top-notification-banner" class="hidden fixed top-0 w-full z-[60] bg-gradient-to-r from-primary to-secondary text-white py-2 px-4 text-center text-sm font-headline font-bold flex items-center justify-center gap-4 transition-all shadow-[0_4_20px_rgba(255,45,120,0.4)]">
+<span id="top-notification-text" class="tracking-wide"></span>
+<a id="top-notification-btn" href="#" target="_blank" class="bg-white text-gray-900 font-bold shadow-md px-4 py-1 rounded-full text-xs uppercase tracking-widest hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] hover:scale-105 transition-all"></a>
+<button onclick="closeNotification()" class="absolute right-4 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 transition-opacity flex items-center justify-center bg-white/20 rounded-full p-0.5">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<nav id="main-nav"
+class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_4_20px_rgba(0,0,0,0.5)] transition-all duration-300">
+<div class="flex justify-between items-center px-6 md:px-12 lg:px-20 py-4 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-3">
+<img src="./logo.png?v=5" fetchpriority="high" alt="SGCC Logo" class="h-14 w-14 xl:h-16 xl:w-16 object-cover rounded-2xl drop-shadow-[0_0_12px_rgba(99,102,241,0.5)] shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-indigo-400/20 hover:border-indigo-400/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:scale-105 transition-all duration-300">
+<div class="flex flex-col leading-tight">
+<span class="text-xl sm:text-2xl md:text-3xl font-headline font-extrabold tracking-tight" style="background: linear-gradient(90deg, #ffe04a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SGCC</span>
+<span class="text-[11px] sm:text-xs md:text-sm font-label font-semibold tracking-wider text-on-surface-variant uppercase mt-1 hidden sm:block">Shree Ganesh Computer Classes</span>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-8"><a class="nav-link text-secondary border-secondary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/index.html">Home</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/courses.html">Courses</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/study-material.html">Study Material</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/about.html">About Us</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95" href="/contact.html">Contact Us</a>
+<a class="nav-link text-on-surface-variant hover:text-primary border-transparent hover:border-primary border-b-2 pb-1 font-headline font-bold tracking-tight transition-all duration-300 ease-out active:scale-95"
+href="/admin.html">Admin</a>
+</div>
+<div class="flex items-center gap-6"><button id="theme-toggle" class="theme-toggle-pill" aria-label="Toggle Theme">
+<span class="theme-toggle-track"><span class="theme-toggle-stars"><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span><span class="theme-toggle-star"></span></span><span class="theme-toggle-sun-rays"></span></span>
+<span class="theme-toggle-thumb"><span class="material-symbols-outlined theme-toggle-sun">wb_sunny</span><span class="material-symbols-outlined theme-toggle-moon">nights_stay</span></span>
+</button>
+<button
+class="enquire-btn bg-primary px-6 py-2 rounded-lg font-headline font-bold text-on-primary hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all active:scale-95">
+Enquire Now
+</button>
+</div>
+</div>
+</nav>
+<main class="pt-28 md:pt-32 pb-20 min-h-[800px]">
+<div class="max-w-4xl mx-auto px-6 py-16">
+<h1 class="text-4xl md:text-5xl font-headline font-bold mb-8 text-on-surface">Privacy Policy</h1>
+<div class="space-y-6 text-on-surface-variant leading-relaxed font-body">
+<p>Welcome to Shree Ganesh Computer Classes. We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and share your data when you visit our website.</p>
+<h2 class="text-2xl font-headline font-bold text-on-surface mt-8 mb-4">1. Information We Collect</h2>
+<p>We may collect personal information such as your name, email address, phone number, and any other details you provide when submitting inquiries or filling out forms on our website.</p>
+<h2 class="text-2xl font-headline font-bold text-on-surface mt-8 mb-4">2. How We Use Your Information</h2>
+<p>We use the information we collect to communicate with you, process your admissions, provide updates regarding our courses, and improve our services and website user experience.</p>
+<h2 class="text-2xl font-headline font-bold text-on-surface mt-8 mb-4">3. Data Security</h2>
+<p>We implement appropriate technical and organizational measures to ensure that your personal information is kept secure and protected against unauthorized access, loss, or misuse.</p>
+<h2 class="text-2xl font-headline font-bold text-on-surface mt-8 mb-4">4. Data Retention</h2>
+<p>We retain your personal information only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.</p>
+<h2 class="text-2xl font-headline font-bold text-on-surface mt-8 mb-4">5. Third-Party Links</h2>
+<p>Our website may contain links to other sites that are not operated by us. If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit. We have no control over and assume no responsibility for the content, privacy policies or practices of any third-party sites or services.</p>
+<h2 class="text-2xl font-headline font-bold text-on-surface mt-8 mb-4">6. Your Data Rights</h2>
+<p>You have the right to request access to the personal data we hold about you, to ask that your personal data be corrected, updated, or deleted. If you would like to exercise any of these rights, please contact us.</p>
+<h2 class="text-2xl font-headline font-bold text-on-surface mt-8 mb-4">7. Contact Us</h2>
+<p>If you have any questions or concerns about our Privacy Policy, please contact us at sgccbandra@gmail.com.</p>
+</div>
+</div>
+</main>
+<footer class="bg-background border-t border-secondary/30 py-12 px-6 md:px-12 lg:px-20">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="space-y-4">
+<div class="text-lg font-bold text-tertiary font-headline">SGCC</div>
+<p class="font-['Inter'] text-sm text-on-surface-variant leading-relaxed">
+Pioneering computer education in Mumbai since 2004. Your gateway to technical mastery and career growth.
+</p>
+<div class="flex gap-4 pt-2">
+<a href="https://earth.google.com/web/search/Church+Of+St%2e+Joseph+The+Worker,+B-9,+next+to+Cardinal+School,+Subhash+Nagar,+Bandra+East,+Mumbai,+Maharashtra+400051/@19.06669428,72.84752296,19.59091956a,200.35027466d,35y,0h,0t,0r/data=CuYBGrcBErABCiUweDNiZTdjOTFjNWM4Njc2Y2Q6MHg0YjI4MzNjNjBiMzQzNDQ4Gb_v37w4ETNAIeFDiZY8NlJAKnVDaHVyY2ggT2YgU3QuIEpvc2VwaCBUaGUgV29ya2VyLCBCLTksIG5leHQgdG8gQ2FyZGluYWwgU2Nob29sLCBTdWJoYXNoIE5hZ2FyLCBCYW5kcmEgRWFzdCwgTXVtYmFpLCBNYWhhcmFzaHRyYSA0MDAwNTEYASABIiYKJAnIj-MTxsY8QBEl9QGsOIYowBkDpLkCBR5VQCE-7ehzeEI8wEICCAE6AwoBMEICCABKDQj___________8BEAA?authuser=0" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-primary hover:border-primary hover:text-on-primary hover:shadow-[0_0_15px_rgba(255,26,107,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Location on Google Earth">
+<span class="material-symbols-outlined text-[20px]">public</span>
+</a>
+<a href="https://mail.google.com/mail/?view=cm&fs=1&to=sgccbandra@gmail.com" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-secondary hover:border-secondary hover:text-on-secondary hover:shadow-[0_0_15px_rgba(0,255,204,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Email Us">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</a>
+<a href="https://wa.me/918898919457" target="_blank" class="w-10 h-10 rounded-full bg-surface-container-high border border-outline/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:border-[#25D366] hover:text-white hover:shadow-[0_0_15px_rgba(37,211,102,0.4)] hover:-translate-y-1 transition-all duration-300" aria-label="Chat on WhatsApp">
+<span class="material-symbols-outlined text-[20px]">call</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="courses.html">Courses</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="contact.html">Bandra East Campus</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block cursor-pointer" onclick="openFaqModal(event)">FAQ</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Legal</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="privacy.html">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-all hover:translate-x-1 inline-block" href="terms.html">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-surface font-headline font-bold mb-6">Contact Us</h4>
+<p class="font-['Inter'] text-sm text-on-surface-variant mb-4">Church Of St. Joseph The Worker, B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai, Maharashtra 400051</p>
+<div class="bg-surface-container-highest p-4 rounded-lg border border-outline-variant">
+<p class="text-[10px] uppercase font-label text-on-surface-variant tracking-widest mb-1">Support Line</p>
+<p class="text-secondary font-headline font-bold">+91 88989 19457 / 82866 13019</p>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center">
+<p class="font-['Inter'] text-sm text-on-surface-variant">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
+</div>
+</footer>
+<script>
+function closeNotification() {
+document.getElementById('top-notification-banner').classList.add('hidden');
+document.getElementById('main-nav').style.top = '0px';
+}
+document.addEventListener('DOMContentLoaded', () => {
+const notifData = JSON.parse(localStorage.getItem('sgcc_notification') || '{"enabled":false,"text":"","btnText":"","btnLink":"https://docs.google.com/forms/d/e/1FAIpQLSfHRBj5oj3v0EeX4cvOCfjl-lw6LnjI0Rp-eT_I3WgO0zg0dA/viewform?usp=publish-editor"}');
+if (notifData.enabled) {
+const banner = document.getElementById('top-notification-banner');
+document.getElementById('top-notification-text').innerText = notifData.text;
+const btn = document.getElementById('top-notification-btn');
+btn.innerText = notifData.btnText;
+btn.href = notifData.btnLink;
+banner.classList.remove('hidden');
+// Use ResizeObserver or timeout to ensure we get the rendered height
+setTimeout(() => {
+const bannerHeight = banner.offsetHeight;
+document.getElementById('main-nav').style.top = bannerHeight + 'px';
+}, 50);
+}
+});
+</script>
+<script type="module" defer src="./main.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+<style>
+#sgcc-chat-window {
+width: calc(100vw - 2rem);
+max-width: 370px;
+max-height: calc(100vh - 14rem);
+min-height: 300px;
+display: flex;
+flex-direction: column;
+background: var(--color-surface);
+backdrop-filter: blur(20px);
+border: 1px solid rgba(255, 45, 120, 0.35);
+border-radius: 1.25rem;
+box-shadow: 0 0 40px rgba(255, 45, 120, 0.18), 0 8px 32px rgba(0, 0, 0, 0.5);
+overflow: hidden;
+transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+transform-origin: top right;
+}
+#sgcc-chat-window.hidden-chat {
+opacity: 0;
+pointer-events: none;
+transform: scale(0.85) translateY(-20px);
+}
+#chat-messages {
+flex: 1;
+min-height: 0;
+overflow-y: auto;
+padding: 1rem;
+display: flex;
+flex-direction: column;
+gap: 0.75rem;
+scroll-behavior: smooth;
+}
+#chat-messages::-webkit-scrollbar {
+width: 4px;
+}
+#chat-messages::-webkit-scrollbar-track {
+background: transparent;
+}
+#chat-messages::-webkit-scrollbar-thumb {
+background: rgba(255, 45, 120, 0.3);
+border-radius: 99px;
+}
+.chat-bubble {
+max-width: 82%;
+padding: 0.6rem 0.9rem;
+border-radius: 1rem;
+font-size: 0.875rem;
+line-height: 1.5;
+word-break: break-word;
+}
+.bubble-bot {
+background: var(--color-surface-container-highest);
+border: 1px solid var(--color-outline-variant);
+color: var(--color-on-surface);
+border-bottom-left-radius: 0.2rem;
+align-self: flex-start;
+}
+.bubble-user {
+background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
+color: #fff;
+border-bottom-right-radius: 0.2rem;
+align-self: flex-end;
+box-shadow: 0 0 12px rgba(255, 45, 120, 0.35);
+}
+.typing-dots span {
+display: inline-block;
+width: 7px;
+height: 7px;
+margin: 0 2px;
+background: var(--color-secondary);
+border-radius: 50%;
+animation: bounce-dot 1.2s infinite;
+}
+.typing-dots span:nth-child(2) {
+animation-delay: 0.2s;
+}
+.typing-dots span:nth-child(3) {
+animation-delay: 0.4s;
+}
+@keyframes bounce-dot {
+0%,
+80%,
+100% {
+transform: translateY(0);
+opacity: 0.5;
+}
+40% {
+transform: translateY(-6px);
+opacity: 1;
+}
+}
+#fab-chat-btn {
+width: 72px;
+height: 72px;
+border-radius: 50%;
+background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
+box-shadow: 0 0 22px rgba(255, 45, 120, 0.5), 0 4px 16px rgba(0, 0, 0, 0.4);
+border: none;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: transform 0.3s, box-shadow 0.3s;
+position: relative;
+}
+#fab-chat-btn:hover {
+transform: scale(1.1);
+box-shadow: 0 0 34px rgba(255, 45, 120, 0.7);
+}
+#fab-chat-btn .notif-dot {
+position: absolute;
+top: 6px;
+right: 6px;
+width: 10px;
+height: 10px;
+background: var(--color-secondary);
+border-radius: 50%;
+border: 2px solid #05050A;
+animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+0%,
+100% {
+box-shadow: 0 0 0 0 var(--color-secondary)
+}
+50% {
+box-shadow: 0 0 0 6px transparent
+}
+}
+#chat-input {
+background: var(--color-surface-container-high);
+border: 1px solid var(--color-primary); opacity: 0.8;
+color: var(--color-on-surface);
+border-radius: 0.75rem;
+padding: 0.6rem 0.85rem;
+font-size: 0.875rem;
+flex: 1;
+outline: none;
+transition: border-color 0.2s;
+}
+#chat-input:focus {
+border-color: var(--color-secondary);
+}
+#chat-input::placeholder {
+color: var(--color-outline);
+}
+#chat-send-btn {
+background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
+border: none;
+color: #fff;
+border-radius: 0.75rem;
+width: 38px;
+height: 38px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: opacity 0.2s, transform 0.2s;
+flex-shrink: 0;
+}
+#chat-send-btn:hover {
+opacity: 0.85;
+transform: scale(1.08);
+}
+#chat-send-btn:disabled {
+opacity: 0.4;
+cursor: not-allowed;
+transform: none;
+}
+</style>
+<div class="fixed top-28 right-8 z-50 flex flex-col items-end gap-3">
+<button id="fab-chat-btn" aria-label="Open AI Chat">
+<span id="fab-icon" class="material-symbols-outlined text-white text-2xl"
+style='font-variation-settings:"FILL" 1'>smart_toy</span>
+<span class="notif-dot"></span>
+</button>
+<div id="sgcc-chat-window" class="hidden-chat">
+<div class="flex items-center gap-3 px-4 py-3 border-b border-primary/30"
+style="background:var(--color-surface-container-high)">
+<div
+class="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined text-lg"
+style='font-variation-settings:"FILL" 1'>smart_toy</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold font-headline text-inverse-surface" style="line-height:1.2">SGCC Assistant</p>
+<p class="text-[10px] text-secondary flex items-center gap-1"><span
+class="w-1.5 h-1.5 rounded-full bg-[var(--color-secondary)] inline-block animate-pulse"></span>Online</p>
+</div>
+<button id="chat-close-btn" class="text-outline hover:text-primary transition-colors"
+aria-label="Close chat">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div id="chat-messages">
+</div>
+<div class="flex items-center gap-2 px-3 py-3 border-t border-primary/30"
+style="background:var(--color-surface-container-lowest)">
+<input id="chat-input" type="text" placeholder="Ask about courses, fees, timings…" maxlength="400" />
+<button id="chat-send-btn" aria-label="Send">
+<span class="material-symbols-outlined text-base">send</span>
+</button>
+</div>
+<p class="text-center text-[10px] text-outline pb-2">Powered by Gemini AI · SGCC</p>
+</div>
+</div>
+<script>
+(function () {
+const SGCC_CONTEXT = `You are the SGCC Assistant, a super friendly, warm, and highly knowledgeable human-like chatbot for Shree Ganesh Computer Classes (SGCC). 
+Your goal is to provide helpful, conversational, and accurate information to visitors. Be welcoming, use emojis appropriately, and speak naturally like a helpful receptionist.
+Here is all the information about our institute and web pages:
+- **Location:** Church Of St. Joseph The Worker, B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai, Maharashtra 400051. (2-minute walk from Bandra East station).
+- **Contact Info:** Phone: +91 88989 19457 / +91 82866 13019. Email: sgccbandra@gmail.com.
+- **Visiting Hours:** Mon-Fri 8:00 AM - 8:00 PM, Saturday 10:00 AM - 6:00 PM, Sunday Closed.
+- **About SGCC:** We have 25+ years of excellence and 15k+ certified alumni. We are an MKCL Authorized partner and a YCMOU Center. We offer Expert Mentorship, a Modern Curriculum updated bi-annually, and Placement Ready training.
+- **Courses Offered:** 
+1. Flagship: MKCL's MS-CIT Mastery Program (Govt. recognized, hands-on lab training).
+2. Programming: Basics & Advance Programming (C, C++, C#, Java, Python, Kotlin).
+3. Design & Web: Web Designing & Web Development, Graphic Designing, UI/UX Designing.
+4. Advanced Tech: Prompt Engineering & Generative AI, Digital Marketing with AI.
+5. Fundamentals: Basics of Computer, Computer Fundamentals, Office Automation.
+6. Accounts & Typing: Financial Accounting with Tally ERP, Marathi/English/Hindi Typing with Advanced Methods and AI.
+7. Hardware: Diploma in IT Hardware & Networking.
+- **Study Material Page:** Students can access our exclusive repository of free study materials, coding cheat sheets, and MSCIT practice modules. No registration is required.
+- **Admissions:** Admissions are OPEN for 2026-2027. Visitors can enroll or enquire via the 'Enquire Now' buttons on our website.
+Always respond in a concise, friendly manner. If you don't know the answer, politely ask them to call or email us.`;
+const chatWindow = document.getElementById('sgcc-chat-window');
+const fabBtn = document.getElementById('fab-chat-btn');
+const closeBtn = document.getElementById('chat-close-btn');
+const messagesDiv = document.getElementById('chat-messages');
+const input = document.getElementById('chat-input');
+const sendBtn = document.getElementById('chat-send-btn');
+const fabIcon = document.getElementById('fab-icon');
+let isOpen = false;
+let history = []; // Stores messages as {role: 'user'|'assistant', content: string}
+function openChat() {
+if (!chatWindow) return;
+chatWindow.classList.remove('hidden-chat');
+if (fabIcon) fabIcon.textContent = 'close';
+isOpen = true;
+input && input.focus();
+const dot = fabBtn?.querySelector('.notif-dot');
+if (dot) dot.remove();
+}
+function closeChat() {
+if (!chatWindow) return;
+chatWindow.classList.add('hidden-chat');
+if (fabIcon) fabIcon.textContent = 'smart_toy';
+isOpen = false;
+}
+if (fabBtn) fabBtn.addEventListener('click', () => isOpen ? closeChat() : openChat());
+if (closeBtn) closeBtn.addEventListener('click', closeChat);
+function appendBubble(text, role) {
+if (!messagesDiv) return;
+const div = document.createElement('div');
+div.className = 'chat-bubble ' + (role === 'user' ? 'bubble-user' : 'bubble-bot');
+let formattedText = text
+.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+.replace(/\*(.*?)\*/g, '<em>$1</em>')
+.replace(/\n/g, '<br/>');
+div.innerHTML = formattedText;
+if (qrDiv && qrDiv.parentNode === messagesDiv) {
+messagesDiv.insertBefore(div, qrDiv);
+} else {
+messagesDiv.appendChild(div);
+}
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
+return div;
+}
+function appendTyping() {
+if (!messagesDiv) return;
+const div = document.createElement('div');
+div.className = 'chat-bubble bubble-bot typing-dots';
+div.innerHTML = '<span></span><span></span><span></span>';
+if (qrDiv && qrDiv.parentNode === messagesDiv) {
+messagesDiv.insertBefore(div, qrDiv);
+} else {
+messagesDiv.appendChild(div);
+}
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
+return div;
+}
+// Initialize welcome message
+appendBubble("👋 Hi! I'm the SGCC Assistant. Ask me anything about our courses, timings, admissions, or location!", 'bot');
+// Quick replies logic
+const quickReplies = ['Courses offered', 'Admission process', 'Location & timings', 'MS-CIT details'];
+var qrDiv = document.createElement('div');
+qrDiv.className = 'flex flex-wrap gap-2 px-1 mb-2';
+quickReplies.forEach(q => {
+const btn = document.createElement('button');
+btn.textContent = q;
+btn.className = 'text-xs px-3 py-1.5 rounded-full border border-primary/40 text-primary hover:bg-primary/30 transition-colors';
+btn.onclick = () => sendMessage(q);
+qrDiv.appendChild(btn);
+});
+if (messagesDiv) messagesDiv.appendChild(qrDiv);
+async function sendMessage(text) {
+const messageText = (text || (input ? input.value : '')).trim();
+if (!messageText) return;
+if (input) input.value = '';
+if (sendBtn) sendBtn.disabled = true;
+appendBubble(messageText, 'user');
+history.push({ role: 'user', content: messageText });
+const typingEl = appendTyping();
+try {
+const API_KEY = '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';
+const url = 'https://openrouter.ai/api/v1/chat/completions';
+const res = await fetch(url, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'Authorization': `Bearer ${API_KEY}`,
+'HTTP-Referer': window.location.origin,
+'X-Title': 'SGCC Assistant'
+},
+body: JSON.stringify({
+model: 'google/gemini-2.0-flash-001',
+messages: [
+{ role: 'system', content: SGCC_CONTEXT },
+...history
+]
+})
+});
+const data = await res.json();
+if (!res.ok) throw new Error(data.error?.message || 'API request failed');
+const reply = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't process that.";
+if (typingEl) typingEl.remove();
+appendBubble(reply, 'assistant');
+history.push({ role: 'assistant', content: reply });
+} catch (err) {
+if (typingEl) typingEl.remove();
+const fallback = getFallbackReply(messageText.toLowerCase());
+appendBubble(fallback, 'assistant');
+console.error('Chatbot error:', err);
+} finally {
+if (sendBtn) sendBtn.disabled = false;
+if (input) input.focus();
+}
+}
+function getFallbackReply(q) {
+if (q.includes('ms-cit') || q.includes('mscit')) return '📋 <b>MS-CIT</b> is a Govt. recognized 3-month digital literacy course by MKCL. It covers computer basics, MS Office, and more. You can view the study guide here: <a href="https://drive.google.com/file/d/1bG0Tx7l3jhifUbZkrokqcD-HPujKky_d/view" target="_blank" class="text-secondary underline">View Material</a>';
+if (q.includes('course')) return '📚 We offer 15+ courses: MS-CIT, Web Dev, Graphic Design, UI/UX, Tally, Python, and AI!';
+if (q.includes('fee') || q.includes('cost')) return '💳 Fees vary by course. Please call <b>+91 88989 19457 / 82866 13019</b> or visit our Bandra East campus.';
+if (q.includes('location') || q.includes('address')) return '📍 We are at <b>Church Of St. Joseph The Worker, B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai</b>, Maharashtra 400051.';
+if (q.includes('timing')) return '⏰ We have morning and evening batches. Call us for details!';
+return "I'm here to help with info about SGCC courses, location, and admissions! You can also reach us at +91 88989 19457 / 82866 13019.";
+}
+if (input) {
+input.addEventListener('keydown', e => {
+if (e.key === 'Enter' && !sendBtn.disabled) sendMessage();
+});
+}
+if (sendBtn) sendBtn.addEventListener('click', () => sendMessage());
+})();
+</script>
+
+<!-- FAQ Modal -->
+<div id="faq-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+  <div class="bg-surface-container glass-card p-6 md:p-10 rounded-2xl max-w-2xl w-full mx-4 border border-outline/30 relative max-h-[85vh] overflow-y-auto">
+    <button onclick="closeFaqModal()" class="absolute top-4 right-4 text-on-surface-variant hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
+    <h3 class="text-3xl font-headline font-bold text-on-surface mb-6 flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary text-4xl">live_help</span>
+      Frequently Asked Questions
+    </h3>
+    <div class="space-y-4">
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          What courses do you offer?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We offer a wide range of courses including MS-CIT, Tally Prime, Web Development, Graphic Design, Python, Advanced Programming, and Digital Marketing.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Where is the campus located?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          We are located at B-9, next to Cardinal School, Subhash Nagar, Bandra East, Mumbai. It's a quick 2-minute walk from Bandra Colony metro station!
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          How do I enroll in a course?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          You can enroll by visiting our Bandra East campus in person, or by filling out the online Enquiry form. Our staff will guide you through the process.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Are your classrooms air-conditioned?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Yes, we provide fully air-conditioned modern computer labs to ensure a comfortable and productive learning environment for all students.
+        </div>
+      </details>
+      <details class="group bg-surface-container-high rounded-xl border border-outline/20 [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex items-center justify-between p-4 cursor-pointer font-bold text-on-surface group-open:text-secondary transition-colors">
+          Do you provide certificates?
+          <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+        </summary>
+        <div class="p-4 pt-0 text-sm text-on-surface-variant leading-relaxed">
+          Absolutely! Upon successful completion of your course and relevant exams, you will receive an industry-recognized certificate (e.g., from MKCL for MS-CIT).
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+</body>
+</html>
