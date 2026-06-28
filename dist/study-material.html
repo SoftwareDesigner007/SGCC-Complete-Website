@@ -22,8 +22,8 @@ rel="stylesheet" />
 <script src="./tailwind-config.js"></script>
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="./theme.js"></script>
-  <script type="module" crossorigin src="/assets/main-BCCjS8TC.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/style-ChDKmW2p.css">
+  <script type="module" crossorigin src="/assets/main-BmxI0Zx8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-CWK_nbJm.css">
 </head>
 <body
 class="bg-background text-on-background font-body scanline min-h-screen selection:bg-primary selection:text-white">
@@ -31,8 +31,7 @@ class="bg-background text-on-background font-body scanline min-h-screen selectio
 class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_4_20px_rgba(0,0,0,0.5)]">
 <div class="flex justify-between items-center px-6 md:px-12 lg:px-20 py-4 w-full max-w-screen-2xl mx-auto">
 <div class="flex items-center gap-3">
-<img src="/assets/logo-EYtvj6OI.png" fetchpriority="high" alt="SGCC Logo"
-class="h-14 xl:h-16 w-auto object-contain rounded-xl drop-shadow-[0_0_12px_rgba(0,255,209,0.5)] shadow-[0_0_20px_rgba(255,179,71,0.25)] border border-secondary/20 hover:border-secondary/50 hover:shadow-[0_0_30px_rgba(0,255,209,0.4)] hover:scale-105 transition-all duration-300">
+<img src="/assets/logo-CbAnhZXu.png?v=5" fetchpriority="high" alt="SGCC Logo" class="h-14 w-14 xl:h-16 xl:w-16 object-cover rounded-2xl drop-shadow-[0_0_12px_rgba(99,102,241,0.5)] shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-indigo-400/20 hover:border-indigo-400/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:scale-105 transition-all duration-300">
 <div class="flex flex-col leading-tight mr-8">
 <span class="text-xl sm:text-2xl md:text-3xl font-headline font-extrabold tracking-tight" style="background: linear-gradient(90deg, #ffe04a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SGCC</span>
 <span class="text-[11px] sm:text-xs md:text-sm font-label font-semibold tracking-wider text-on-surface-variant uppercase mt-1 hidden sm:block">Shree Ganesh Computer Classes</span>
@@ -545,9 +544,14 @@ School, Subhash Nagar, Bandra East, Mumbai, Maharashtra 400051</p>
 </div>
 </div>
 </div>
-<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center">
-<p class="font-['Inter'] text-sm text-on-surface-variant">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
-<p class="font-['Inter'] text-sm text-on-surface-variant flex items-center justify-center gap-1 mt-2">Created with <span class="material-symbols-outlined text-primary text-sm" style='font-variation-settings:"FILL" 1'>favorite</span> by <span class="text-on-surface font-semibold tracking-wide">Lakshman Goswami</span></p>
+<div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-secondary/20 text-center flex flex-col items-center gap-3">
+<p class="font-headline text-sm md:text-base text-on-surface-variant tracking-wide font-medium bg-gradient-to-r from-on-surface-variant to-on-surface bg-clip-text text-transparent">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
+<p class="font-headline text-sm md:text-base text-on-surface flex items-center gap-2 font-medium tracking-wide">
+<span class="opacity-80">Created with</span> 
+<span class="material-symbols-outlined text-primary text-lg animate-pulse drop-shadow-[0_0_8px_rgba(255,26,107,0.6)]" style='font-variation-settings:"FILL" 1'>favorite</span> 
+<span class="opacity-80">by</span> 
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-primary font-bold text-lg hover:scale-105 transition-transform cursor-default drop-shadow-sm">Lakshman Goswami</span>
+</p>
 </div>
 </footer>
 <button
@@ -557,7 +561,22 @@ style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
 </button>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
 <script>
-(function syncMaterialsFromAdmin() {
+(async function syncMaterialsFromAdmin() {
+const JSONBIN_BIN_ID = '69fb633daaba8821977b7752';
+const JSONBIN_MASTER_KEY = '$2a$10$XurIdUSPSkFigbQpqqdNJOIXGaFBtwGIi9cUjCy/SUJNlB.WW9AdK';
+try {
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY }
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (data.record) {
+      if (data.record.courses && data.record.courses.length > 0) localStorage.setItem('sgcc_courses', JSON.stringify(data.record.courses));
+      if (data.record.materials && data.record.materials.length > 0) localStorage.setItem('sgcc_materials', JSON.stringify(data.record.materials));
+    }
+  }
+} catch(e) {}
+
 const DEFAULT_COURSES = [
 { id:'c1', name:"MKCL'S MSCIT", category:"Certified Programs", duration:"6 Months", badge:"Premium", description:"Flagship digital literacy certification by MKCL. Essential computer skills for academic and professional success." },
 { id:'c2', name:"Diploma in IT Hardware & Networking", category:"Hardware & Networking", duration:"1 Year", badge:"Practical", description:"Comprehensive training in PC assembly, troubleshooting, server management, and secure network infrastructure design." },

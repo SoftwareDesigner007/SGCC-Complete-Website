@@ -25,14 +25,14 @@
 <script src="./tailwind-config.js"></script>
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="./theme.js"></script>
-  <script type="module" crossorigin src="/assets/main-BCCjS8TC.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/style-ChDKmW2p.css">
+  <script type="module" crossorigin src="/assets/main-BmxI0Zx8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-CWK_nbJm.css">
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary selection:text-white">
 <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_4_20px_rgba(0,0,0,0.5)]">
 <div class="flex justify-between items-center px-6 md:px-12 lg:px-20 py-4 w-full max-w-screen-2xl mx-auto">
 <div class="flex items-center gap-3">
-<img src="/assets/logo-EYtvj6OI.png" fetchpriority="high" alt="SGCC Logo" class="h-14 xl:h-16 w-auto object-contain rounded-xl drop-shadow-[0_0_12px_rgba(0,255,209,0.5)] shadow-[0_0_20px_rgba(255,179,71,0.25)] border border-secondary/20 hover:border-secondary/50 hover:shadow-[0_0_30px_rgba(0,255,209,0.4)] hover:scale-105 transition-all duration-300">
+<img src="/assets/logo-CbAnhZXu.png?v=5" fetchpriority="high" alt="SGCC Logo" class="h-14 w-14 xl:h-16 xl:w-16 object-cover rounded-2xl drop-shadow-[0_0_12px_rgba(99,102,241,0.5)] shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-indigo-400/20 hover:border-indigo-400/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:scale-105 transition-all duration-300">
 <div class="flex flex-col leading-tight">
 <span class="text-xl sm:text-2xl md:text-3xl font-headline font-extrabold tracking-tight" style="background: linear-gradient(90deg, #ffe04a, #ffb347); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SGCC</span>
 <span class="text-[11px] sm:text-xs md:text-sm font-label font-semibold tracking-wider text-on-surface-variant uppercase mt-1 hidden sm:block">Shree Ganesh Computer Classes</span>
@@ -59,34 +59,47 @@ Enquire Now
 <section class="relative min-h-[716px] flex items-center px-6 md:px-12 lg:px-20 py-16 md:py-24 lg:py-32" data-aos="fade-up" data-aos-duration="1000">
 <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 <div>
-<h2 class="text-on-surface-variant font-label text-sm uppercase tracking-[0.2em] mb-4 text-secondary neon-glow-text">The SGCC Story</h2>
-<h1 class="text-4xl md:text-6xl font-headline font-extrabold tracking-tighter leading-none mb-8">
-Legacy of <span class="text-primary italic">Digital Excellence</span> In Mumbai.
+<h2 class="text-secondary font-label text-sm uppercase tracking-[0.3em] font-bold mb-6 flex items-center gap-3">
+    <span class="w-8 h-px bg-secondary"></span> The SGCC Story
+</h2>
+<h1 class="text-5xl md:text-7xl font-headline font-black tracking-tighter leading-[1.1] mb-8 text-on-surface drop-shadow-md">
+    Legacy of <br/>
+    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary animate-gradient-x neon-glow-text">Digital Excellence</span> <br/>
+    In Mumbai.
 </h1>
-<p class="text-xl text-on-surface-variant max-w-lg mb-10 leading-relaxed font-body">
+<p class="text-lg md:text-xl text-on-surface-variant max-w-lg mb-12 leading-relaxed font-body font-medium tracking-wide">
 Born in the heart of Bandra East, Shree Ganesh Computer Classes (SGCC) has been the cornerstone of technical literacy for over two decades. We bridge the gap between traditional education and the futuristic demands of the digital economy.
 </p>
-<div class="flex gap-4 opacity-60 grayscale">
-<div class="flex items-center gap-2">
-<span class="text-2xl font-bold font-headline text-on-surface">20+</span>
-<span class="text-xs font-label text-on-surface-variant uppercase tracking-tighter leading-tight">Years of<br/>Trust</span>
+<div class="flex gap-8">
+<div class="flex flex-col gap-1">
+<span class="text-4xl font-black font-headline text-on-surface drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">20+</span>
+<span class="text-xs font-label text-primary uppercase tracking-widest font-bold">Years of Trust</span>
 </div>
-<div class="w-px h-10 bg-outline/30 mx-4"></div>
-<div class="flex items-center gap-2">
-<span class="text-2xl font-bold font-headline text-on-surface">15k+</span>
-<span class="text-xs font-label text-on-surface-variant uppercase tracking-tighter leading-tight">Graduates</span>
+<div class="w-px h-14 bg-gradient-to-b from-transparent via-outline to-transparent"></div>
+<div class="flex flex-col gap-1">
+<span class="text-4xl font-black font-headline text-on-surface drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">15k+</span>
+<span class="text-xs font-label text-secondary uppercase tracking-widest font-bold">Graduates</span>
 </div>
 </div>
 </div>
-<div class="relative">
-<div class="absolute -inset-4 bg-primary/30 blur-3xl rounded-full"></div>
+<div class="relative group cursor-pointer" onclick="playCampusWelcome()">
+<div class="absolute -inset-4 bg-gradient-to-r from-primary/40 to-secondary/40 blur-3xl rounded-full opacity-50 group-hover:opacity-80 transition-opacity duration-700"></div>
+<div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl overflow-hidden z-20">
+   <div class="absolute inset-0" style="background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%); transform: translateX(-100%); animation: shine-sweep 0.7s ease forwards;"></div>
+</div>
         <img loading="lazy"
-            class="relative rounded-xl border border-outline/30 shadow-2xl z-10 grayscale hover:grayscale-0 transition-all duration-700"
-            alt="Futuristic workstation with multiple monitors in a dark room with neon blue and pink ambient lighting"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFVPcIMJNgKwvhQ64z9c4XMt01Jij1dIGBBCce6TOXYeFt3xjEjEaSF5Fdt36iUsFxzovrKKTZRjpjaKM-7QK-HvprZhEyJSPqV-MSzOhfaXzgpIg4Ovai0A28V68EBnOyQ1QMGTQ0pQVhi4MDw5nA6rL7a3x1gnvc4oeWBBnKSUvaaryARxFAWoovb8vLSX8LKrIcrGrh3Z7LaoGrFh8mr8V7JkflEmV-qGw_2xPxP6Q6RXMnMBkTf9F5Wx2eJmvNnR7c3S_Ej691" />
-<div class="absolute bottom-6 right-6 z-20 bg-surface-container/90 backdrop-blur-md p-4 border-l-4 border-primary">
-<p class="text-[10px] font-label tracking-widest uppercase text-on-surface-variant">Bandra East Roots</p>
-<p class="text-xl font-headline font-bold text-on-surface">Since 2004</p>
+            class="relative rounded-2xl border border-outline/30 shadow-[0_0_40px_rgba(0,255,204,0.3)] z-10 hover:shadow-[0_0_60px_rgba(255,45,120,0.5)] transition-all duration-700 hover:scale-[1.02] w-full"
+            alt="Shree Ganesh Computer Classes Building"
+            src="/assets/Image%202-BMXZTNnu.png" />
+<div class="absolute top-6 -left-6 md:-left-12 z-20 bg-background/70 backdrop-blur-md px-4 py-2 border-l-4 border-primary rounded-r-lg shadow-[0_4_15px_rgba(0,0,0,0.5)] transform group-hover:translate-x-2 transition-transform duration-500 pointer-events-none">
+<p class="text-xs md:text-sm font-headline font-extrabold text-white tracking-wide">
+<span class="text-primary neon-glow-primary">SGCC</span> <span class="opacity-90">Shree Ganesh Computer Classes</span>
+</p>
+<p class="text-[10px] md:text-xs font-label uppercase text-secondary tracking-[0.2em] font-bold mt-1">Campus</p>
+</div>
+<div class="absolute -bottom-6 -right-6 md:-right-12 z-20 bg-surface-container/90 backdrop-blur-md p-5 border-l-4 border-secondary rounded-r-lg shadow-2xl transform group-hover:-translate-y-2 transition-transform duration-500 pointer-events-none">
+<p class="text-[10px] font-label tracking-widest uppercase text-secondary font-bold mb-1">Bandra East Roots</p>
+<p class="text-2xl font-headline font-black text-on-surface">Since 2004</p>
 </div>
 </div>
 </div>
@@ -176,7 +189,7 @@ To be recognized as the premier hub for technological vocational training in Ind
 <div>
 <h4 class="text-xl font-headline font-bold mb-4 text-on-surface">Yashwantrao Chavan Maharashtra Open University</h4>
 <p class="text-on-surface-variant leading-relaxed mb-6 font-body">Authorized study center for degree and diploma programs, providing academic excellence with flexible learning schedules.</p>
-<a class="text-secondary font-headline font-bold flex items-center gap-2 hover:gap-4 transition-all" href="#">Explore Programs <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+<a id="explore-programs-btn" class="text-secondary font-headline font-bold flex items-center gap-2 hover:gap-4 transition-all cursor-pointer">Explore Programs <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
 </div>
 </div>
 <div class="glass-panel p-8 rounded-xl flex items-start gap-6 border-l-4 border-primary">
@@ -184,7 +197,7 @@ To be recognized as the premier hub for technological vocational training in Ind
 <div>
 <h4 class="text-xl font-headline font-bold mb-4 text-on-surface">Maharashtra Knowledge Corporation Limited</h4>
 <p class="text-on-surface-variant leading-relaxed mb-6 font-body">Official center for MS-CIT and KLiC certificate courses, delivering the gold standard of IT literacy in Maharashtra.</p>
-<a class="text-primary font-headline font-bold flex items-center gap-2 hover:gap-4 transition-all" href="#">Verify Affiliation <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+<a id="verify-affiliation-btn" class="text-primary font-headline font-bold flex items-center gap-2 hover:gap-4 transition-all cursor-pointer">Verify Affiliation <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
 </div>
 </div>
 </div>
@@ -277,9 +290,14 @@ Pioneering computer education in Mumbai since 2004. Your gateway to technical ma
 </div>
 </div>
 </div>
-<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center">
-<p class="font-['Inter'] text-sm text-on-surface-variant">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
-<p class="font-['Inter'] text-sm text-on-surface-variant flex items-center justify-center gap-1 mt-2">Created with <span class="material-symbols-outlined text-primary text-sm" style='font-variation-settings:"FILL" 1'>favorite</span> by <span class="text-on-surface font-semibold tracking-wide">Lakshman Goswami</span></p>
+<div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-secondary/20 text-center flex flex-col items-center gap-3">
+<p class="font-headline text-sm md:text-base text-on-surface-variant tracking-wide font-medium bg-gradient-to-r from-on-surface-variant to-on-surface bg-clip-text text-transparent">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
+<p class="font-headline text-sm md:text-base text-on-surface flex items-center gap-2 font-medium tracking-wide">
+<span class="opacity-80">Created with</span> 
+<span class="material-symbols-outlined text-primary text-lg animate-pulse drop-shadow-[0_0_8px_rgba(255,26,107,0.6)]" style='font-variation-settings:"FILL" 1'>favorite</span> 
+<span class="opacity-80">by</span> 
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-primary font-bold text-lg hover:scale-105 transition-transform cursor-default drop-shadow-sm">Lakshman Goswami</span>
+</p>
 </div>
 </footer>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
@@ -343,4 +361,63 @@ Pioneering computer education in Mumbai since 2004. Your gateway to technical ma
     </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+  function playCampusWelcome() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Cancel any ongoing speech
+      const msg = new SpeechSynthesisUtterance("Welcome to Shree Ganesh Computer classes campus preview");
+      msg.volume = 1; // Loudest
+      msg.rate = 1;
+      msg.pitch = 1;
+      // You can try finding a nice voice if available, but default is usually fine
+      window.speechSynthesis.speak(msg);
+    } else {
+      console.warn('SpeechSynthesis API not supported in this browser.');
+    }
+  }
+
+  const verifyBtn = document.getElementById('verify-affiliation-btn');
+  if (verifyBtn) {
+    verifyBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (verifyBtn.dataset.clicked) return;
+      verifyBtn.dataset.clicked = "true";
+      
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#FF1A6B', '#00FFD1', '#ffe04a'],
+        zIndex: 9999
+      });
+
+      setTimeout(() => {
+        window.open("https://alcreadiness.mkcl.org/", "_blank");
+        delete verifyBtn.dataset.clicked;
+      }, 1500);
+    });
+  }
+  const exploreBtn = document.getElementById('explore-programs-btn');
+  if (exploreBtn) {
+    exploreBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (exploreBtn.dataset.clicked) return;
+      exploreBtn.dataset.clicked = "true";
+      
+      confetti({
+        particleCount: 200,
+        spread: 120,
+        origin: { y: 0.6 },
+        colors: ['#00FFD1', '#FFFFFF', '#FF1A6B'],
+        zIndex: 9999,
+        disableForReducedMotion: true
+      });
+
+      setTimeout(() => {
+        window.location.href = "courses.html";
+      }, 1500);
+    });
+  }
+</script>
 </body></html>

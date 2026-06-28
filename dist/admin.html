@@ -20,8 +20,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="./tailwind-config.js"></script>
 <script src="./theme.js"></script>
-  <script type="module" crossorigin src="/assets/main-BCCjS8TC.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/style-ChDKmW2p.css">
+  <script type="module" crossorigin src="/assets/main-BmxI0Zx8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-CWK_nbJm.css">
 </head>
 <body class="bg-background text-on-background font-body min-h-screen overflow-hidden">
 <div id="admin-login-overlay" class="fixed inset-0 z-[200] bg-background flex flex-col items-center justify-center p-4">
@@ -45,20 +45,7 @@
 </div>
 <div class="flex items-center gap-6">
 <div class="flex items-center gap-4">
-<div class="relative group">
-<button class="text-on-surface-variant hover:text-primary hover:drop-shadow-[0_0_8px_var(--color-primary)] transition-all active:scale-95 duration-200 relative">
-<span class="material-symbols-outlined">notifications</span>
-<span id="notif-badge" class="absolute -top-1 -right-1 bg-primary text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(255,45,120,0.8)] hidden">0</span>
-</button>
-<div id="notif-dropdown" class="absolute right-0 top-full mt-2 w-72 glass-card rounded-xl border border-primary/30 shadow-[0_0_30px_rgba(255,45,120,0.2)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden">
-<div class="p-4 border-b border-outline-variant bg-surface-container/80">
-<h4 class="text-xs font-bold font-headline text-on-surface-variant uppercase tracking-widest">New Enquiries</h4>
-</div>
-<div id="notif-list" class="max-h-64 overflow-y-auto divide-y divide-outline-variant/30 flex flex-col">
-<div class="p-4 text-center text-xs text-on-surface-variant font-label">No new notifications</div>
-</div>
-</div>
-</div>
+
 <button id="admin-settings-btn" class="text-on-surface-variant hover:text-primary hover:drop-shadow-[0_0_8px_var(--color-primary)] transition-all active:scale-95 duration-200">
 <span class="material-symbols-outlined">settings</span>
 </button>
@@ -282,6 +269,15 @@ Logout
 </div>
 </div>
 </div>
+<div class="mt-12 pt-6 border-t border-secondary/20 text-center flex flex-col items-center gap-3">
+<p class="font-headline text-sm md:text-base text-on-surface-variant tracking-wide font-medium bg-gradient-to-r from-on-surface-variant to-on-surface bg-clip-text text-transparent">© 2026-2027 Shree Ganesh Computer Classes. All rights reserved.</p>
+<p class="font-headline text-sm md:text-base text-on-surface flex items-center gap-2 font-medium tracking-wide">
+<span class="opacity-80">Created with</span> 
+<span class="material-symbols-outlined text-primary text-lg animate-pulse drop-shadow-[0_0_8px_rgba(255,26,107,0.6)]" style='font-variation-settings:"FILL" 1'>favorite</span> 
+<span class="opacity-80">by</span> 
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-primary font-bold text-lg hover:scale-105 transition-transform cursor-default drop-shadow-sm">Lakshman Goswami</span>
+</p>
+</div>
 </main>
 <div id="course-modal" class="fixed inset-0 z-[300] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4" style="display:none">
 <div class="glass-card w-full max-w-lg p-8 rounded-2xl border border-primary/30 shadow-[0_0_40px_rgba(255,45,120,0.2)]">
@@ -434,27 +430,44 @@ const JSONBIN_HEADERS = {
 'Content-Type': 'application/json',
 'X-Master-Key': JSONBIN_MASTER_KEY
 };
-// Fetch credentials from JSONBin
-async function fetchCredentials() {
+// Fetch cloud data from JSONBin
+async function fetchCloudData() {
 if (!USE_JSONBIN) return null;
 try {
 const res = await fetch(JSONBIN_URL, { headers: JSONBIN_HEADERS });
 if (!res.ok) return null;
 const data = await res.json();
+if (data.record) {
+    if (data.record.courses && data.record.courses.length > 0) {
+        localStorage.setItem('sgcc_courses', JSON.stringify(data.record.courses));
+    }
+    if (data.record.materials && data.record.materials.length > 0) {
+        localStorage.setItem('sgcc_materials', JSON.stringify(data.record.materials));
+    }
+}
 return data.record || null;
 } catch(e) { return null; }
 }
-// Save credentials to JSONBin
+
+// Save credentials and data to JSONBin
 async function saveCredentials(username, password) {
 if (!USE_JSONBIN) return false;
 try {
+const courses = JSON.parse(localStorage.getItem('sgcc_courses') || '[]');
+const materials = JSON.parse(localStorage.getItem('sgcc_materials') || '[]');
 const res = await fetch(JSONBIN_PUT_URL, {
 method: 'PUT',
 headers: JSONBIN_HEADERS,
-body: JSON.stringify({ username, password })
+body: JSON.stringify({ username, password, courses, materials })
 });
 return res.ok;
 } catch(e) { return false; }
+}
+
+async function syncToCloud() {
+if (!USE_JSONBIN) return false;
+const creds = JSON.parse(localStorage.getItem('sgcc_admin_creds') || '{}');
+return await saveCredentials(creds.username || DEFAULT_USERNAME, creds.password || DEFAULT_PASSWORD);
 }
 </script>
 <script>
@@ -495,6 +508,12 @@ localStorage.setItem('sgcc_courses', JSON.stringify(parsed));
 }
 })();
 document.addEventListener('DOMContentLoaded', () => {
+if (USE_JSONBIN) {
+  fetchCloudData().then(() => {
+    if (typeof renderCourseTable === 'function' && !document.getElementById('section-courses').classList.contains('hidden')) renderCourseTable();
+    if (typeof renderMaterialsTable === 'function' && !document.getElementById('section-materials').classList.contains('hidden')) renderMaterialsTable();
+  });
+}
 // Login Logic
 const loginOverlay = document.getElementById('admin-login-overlay');
 const loginForm = document.getElementById('admin-login-form');
@@ -502,38 +521,44 @@ const userInp = document.getElementById('admin-user');
 const passInp = document.getElementById('admin-pass');
 const errorMsg = document.getElementById('login-error');
 if (loginForm) {
-if (sessionStorage.getItem('sgcc_admin_auth') === 'true') {
-loginOverlay.classList.add('hidden');
-document.body.classList.remove('overflow-hidden');
-}
-loginForm.addEventListener('submit', async (e) => {
-e.preventDefault();
-const submitBtn = loginForm.querySelector('button[type="submit"]');
-submitBtn.disabled = true;
-submitBtn.textContent = 'Verifying...';
-// Try JSONBin first, then localStorage cache, then hardcoded defaults
-let creds = await fetchCredentials();
-if (creds) {
-// Cache to localStorage for offline fallback
-localStorage.setItem('sgcc_admin_creds', JSON.stringify(creds));
-} else {
-const cached = JSON.parse(localStorage.getItem('sgcc_admin_creds') || '{}');
-creds = {
-username: cached.username || DEFAULT_USERNAME,
-password: cached.password || DEFAULT_PASSWORD
-};
-}
-submitBtn.disabled = false;
-submitBtn.textContent = 'Login';
-if (userInp.value === creds.username && passInp.value === creds.password) {
-sessionStorage.setItem('sgcc_admin_auth', 'true');
-loginOverlay.classList.add('hidden');
-document.body.classList.remove('overflow-hidden');
-showAdminToast('Login successful!');
-} else {
-errorMsg.classList.remove('hidden');
-}
-});
+    if (sessionStorage.getItem('sgcc_admin_auth') === 'true') {
+        loginOverlay.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Verifying...';
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: userInp.value,
+                    password: passInp.value
+                })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                sessionStorage.setItem('sgcc_admin_auth', 'true');
+                loginOverlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+                showAdminToast('Login successful!');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showAdminToast('Failed to connect to backend server. Make sure it is running.');
+            errorMsg.classList.remove('hidden');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Login';
+        }
+    });
 }
 // Logout Logic
 const logoutBtn = document.getElementById('logout-btn');
@@ -627,18 +652,19 @@ tr.innerHTML = `
 tbody.appendChild(tr);
 });
 document.querySelectorAll('.delete-enq-btn').forEach(btn => {
-btn.addEventListener('click', (e) => {
+btn.addEventListener('click', async (e) => {
 const id = e.currentTarget.getAttribute('data-id');
-let all = JSON.parse(localStorage.getItem('sgcc_enquiries') || '[]');
-all = all.filter(item => item.id !== id);
-localStorage.setItem('sgcc_enquiries', JSON.stringify(all));
+try {
+await fetch(`http://localhost:5000/api/enquiries/${id}`, { method: 'DELETE' });
 showAdminToast('Enquiry deleted.');
 loadEnquiries();
+} catch (error) {
+showAdminToast('Error deleting enquiry.');
+}
 });
 });
 }
-function updateDashboardStats() {
-const all = JSON.parse(localStorage.getItem('sgcc_enquiries') || '[]');
+function updateDashboardStats(all) {
 const courses = JSON.parse(localStorage.getItem('sgcc_courses') || '[]');
 // --- Total Enquiries ---
 const totalEl = document.getElementById('admin-total-enquiries');
@@ -675,8 +701,8 @@ revenueEl.textContent = '+0%';
 } else {
 const now = Date.now();
 const ms15 = 15 * 24 * 60 * 60 * 1000;
-const recent = all.filter(e => e.timestamp && (now - e.timestamp) < ms15).length;
-const prior  = all.filter(e => e.timestamp && (now - e.timestamp) >= ms15 && (now - e.timestamp) < ms15 * 2).length;
+const recent = all.filter(e => e.date && (now - new Date(e.date).getTime()) < ms15).length;
+const prior  = all.filter(e => e.date && (now - new Date(e.date).getTime()) >= ms15 && (now - new Date(e.date).getTime()) < ms15 * 2).length;
 let growthStr = '+0%';
 if (prior === 0 && recent > 0) {
 growthStr = '+100%';
@@ -688,10 +714,18 @@ revenueEl.textContent = growthStr;
 }
 }
 }
-function loadEnquiries(filterText) {
-const all = JSON.parse(localStorage.getItem('sgcc_enquiries') || '[]');
+async function loadEnquiries(filterText) {
+let all = [];
+try {
+const res = await fetch('http://localhost:5000/api/enquiries');
+if (res.ok) {
+all = await res.json();
+}
+} catch (err) {
+console.error("Could not load enquiries from API:", err);
+}
 // Update all stat cards
-updateDashboardStats();
+updateDashboardStats(all);
 // Course breakdown panel (if present)
 const breakdownEl = document.getElementById('admin-course-breakdown');
 if (breakdownEl && all.length > 0) {
@@ -721,12 +755,8 @@ renderEnquiries(filtered);
 }
 loadEnquiries();
 // Poll every 5 seconds for real-time updates
-setInterval(updateDashboardStats, 5000);
+setInterval(() => loadEnquiries(), 5000);
 window.addEventListener('enquiry_added', () => loadEnquiries());
-// Real-time: sync across tabs
-window.addEventListener('storage', (e) => {
-if (e.key === 'sgcc_enquiries') loadEnquiries();
-});
 // Search
 const enqSearchInput = document.getElementById('admin-enq-search');
 if (enqSearchInput) {
@@ -767,6 +797,7 @@ return s ? JSON.parse(s) : DEFAULT_COURSES;
 }
 function saveCoursesData(data) {
 localStorage.setItem('sgcc_courses', JSON.stringify(data));
+if (typeof syncToCloud === 'function') syncToCloud();
 }
 function getMaterialsData() {
 const s = localStorage.getItem('sgcc_materials');
@@ -775,6 +806,7 @@ return [];
 }
 function saveMaterialsData(data) {
 localStorage.setItem('sgcc_materials', JSON.stringify(data));
+if (typeof syncToCloud === 'function') syncToCloud();
 }
 // Section switching
 function showSection(id) {
