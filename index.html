@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- ═══════════════════════════════════════════════════════
      SGCC — Shree Ganesh Computer Classes | Main Homepage
@@ -88,6 +89,19 @@ data-aos="fade-up" data-aos-duration="1000">
 <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/30 blur-[120px] rounded-full"></div>
 <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center relative z-10">
 <div>
+<!-- App Download Button -->
+<button onclick="openAppModal()" class="group relative inline-flex items-center justify-center gap-3 px-8 py-3 mb-8 font-headline font-bold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(255,45,120,0.6)]">
+    <div class="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-secondary opacity-90 group-hover:opacity-100 transition-opacity"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-secondary blur-md opacity-50 group-hover:opacity-80 transition-opacity"></div>
+    <!-- Shine effect -->
+    <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shine-sweep_1.5s_ease-in-out_infinite]"></div>
+    
+    <span class="relative z-10 flex items-center gap-2">
+        <span class="material-symbols-outlined text-2xl animate-bounce">smartphone</span>
+        <span class="tracking-wide uppercase text-sm">Download App</span>
+    </span>
+</button>
+<br/>
 <div
 class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-secondary/30 bg-secondary/5 text-secondary text-xs font-label tracking-widest mb-6">
 <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
@@ -1482,5 +1496,194 @@ View All Courses <span class="material-symbols-outlined text-sm">arrow_forward</
 </a>
 </div>
 </div>
+<div id="app-modal-overlay" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md" onclick="if(event.target===this)closeAppModal()">
+  <div id="app-modal-box" class="relative max-w-3xl w-full rounded-3xl p-6 md:p-8 border shadow-2xl transform transition-all duration-300 scale-95 opacity-0 max-h-[90vh] md:max-h-[85vh] overflow-y-auto scrollbar-hide" style="background:var(--color-surface-container-high); border-color: rgba(255,45,120,0.3);">
+    <!-- Decorative background elements -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 blur-[80px] rounded-full pointer-events-none"></div>
+    
+    <button onclick="closeAppModal()" class="absolute top-6 right-6 w-12 h-12 rounded-full bg-surface-container-high border border-outline/50 flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary hover:bg-primary/10 transition-all z-[100] hover:rotate-90 shadow-lg cursor-pointer">
+      <span class="material-symbols-outlined text-2xl">close</span>
+    </button>
+    
+    <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-center relative z-10">
+      <!-- Image/Preview Section -->
+      <div class="relative group rounded-2xl overflow-hidden border border-outline/30 shadow-[0_10px_30px_rgba(0,0,0,0.5)] mx-auto w-full max-w-xs md:max-w-none">
+        <!-- Default State: App Logo / Illustration -->
+        <div id="app-default-img" class="w-full aspect-square md:aspect-[4/5] bg-surface-container flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500">
+          <div class="w-24 h-24 rounded-2xl bg-gradient-to-tr from-primary to-secondary p-1 mb-6 shadow-[0_0_30px_rgba(255,45,120,0.4)]">
+             <div class="w-full h-full bg-surface-container rounded-xl flex items-center justify-center">
+                <span class="material-symbols-outlined text-5xl text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">school</span>
+             </div>
+          </div>
+          <h4 class="font-headline font-bold text-xl text-on-surface mb-2">SGCC Mobile App</h4>
+          <p class="text-sm text-on-surface-variant">Your complete learning ecosystem in your pocket.</p>
+        </div>
+        
+        <!-- Preview State -->
+        <div id="app-preview-img" class="absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-500 bg-surface-container overflow-hidden">
+           <div id="app-slider" class="w-full h-full flex transition-transform duration-700 ease-in-out">
+              <img src="./app_preview.png" alt="App Slide 1" class="w-full h-full object-contain p-2 shrink-0">
+              <img src="./app_slide_1.png" alt="App Slide 2" class="w-full h-full object-contain p-2 shrink-0">
+              <img src="./app_slide_2.png" alt="App Slide 3" class="w-full h-full object-contain p-2 shrink-0">
+              <img src="./app_slide_3.png" alt="App Slide 4" class="w-full h-full object-contain p-2 shrink-0">
+              <img src="./app_slide_4.png" alt="App Slide 5" class="w-full h-full object-contain p-2 shrink-0">
+              <img src="./app_slide_5.png" alt="App Slide 6" class="w-full h-full object-contain p-2 shrink-0">
+           </div>
+           
+           <!-- Slider Indicators -->
+           <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20">
+              <span class="slide-indicator w-4 h-1.5 rounded-full bg-primary transition-all duration-300"></span>
+              <span class="slide-indicator w-1.5 h-1.5 rounded-full bg-white/30 transition-all duration-300"></span>
+              <span class="slide-indicator w-1.5 h-1.5 rounded-full bg-white/30 transition-all duration-300"></span>
+              <span class="slide-indicator w-1.5 h-1.5 rounded-full bg-white/30 transition-all duration-300"></span>
+              <span class="slide-indicator w-1.5 h-1.5 rounded-full bg-white/30 transition-all duration-300"></span>
+              <span class="slide-indicator w-1.5 h-1.5 rounded-full bg-white/30 transition-all duration-300"></span>
+           </div>
+        </div>
+      </div>
+      
+      <!-- Content Section -->
+      <div>
+        <div class="group relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/50 bg-green-500/10 text-green-400 text-xs font-headline font-bold tracking-widest mb-4 overflow-hidden shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+          <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shine-sweep_2s_ease-in-out_infinite]"></div>
+          <span class="material-symbols-outlined text-sm animate-pulse">new_releases</span>
+          <span class="relative z-10">NOW AVAILABLE</span>
+        </div>
+        <h3 class="text-3xl lg:text-4xl font-headline font-black text-on-surface mb-4 leading-tight tracking-tight">
+          Unlock Your Potential <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary neon-glow-text">Anywhere, Anytime.</span>
+        </h3>
+        <p class="text-on-surface-variant mb-6 leading-relaxed text-sm md:text-base font-body opacity-90">
+          Experience seamless learning with our highly-optimized dedicated app. Get instant access to <strong class="text-primary font-semibold">High Quality Notes, instant direct support through Whatsapp, Fast contact through call</strong>, <strong class="text-secondary font-semibold">Interactive study materials, Live doubt clearing, Mock Tests & Quizzes, and real-time progress tracking</strong>. Designed exclusively for SGCC students to supercharge their career journey from the palm of their hand.
+        </p>
+        
+        <ul class="space-y-3 mb-6 md:mb-8">
+           <li class="flex items-center gap-4 text-base font-medium text-on-surface group">
+              <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-black transition-colors shadow-[0_0_10px_rgba(0,255,209,0.2)]">
+                <span class="material-symbols-outlined text-xl">offline_bolt</span>
+              </div>
+              Offline Video Access
+           </li>
+           <li class="flex items-center gap-4 text-base font-medium text-on-surface group">
+              <div class="w-10 h-10 rounded-full bg-[#78b4ff]/10 flex items-center justify-center text-[#78b4ff] group-hover:bg-[#78b4ff] group-hover:text-black transition-colors shadow-[0_0_10px_rgba(120,180,255,0.2)]">
+                <span class="material-symbols-outlined text-xl">quiz</span>
+              </div>
+              Mock Tests & Quizzes
+           </li>
+           <li class="flex items-center gap-4 text-base font-medium text-on-surface group">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-[0_0_10px_rgba(255,26,107,0.2)]">
+                <span class="material-symbols-outlined text-xl">forum</span>
+              </div>
+              24/7 Doubt Solving
+           </li>
+        </ul>
+        
+        <div class="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 w-full">
+          <a href="https://drive.google.com/uc?export=download&id=1bQioQCVsfsNVjg3PzgtjjPkNwrs68Hfl" download="SGCC_App.apk" target="_top" class="flex-1 min-w-[180px] py-3.5 px-4 md:py-4 rounded-xl font-headline font-bold text-white uppercase tracking-widest text-[12px] md:text-[14px] flex justify-center items-center gap-2 transition-all hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(255,45,120,0.6)] bg-primary relative overflow-hidden group cursor-pointer shadow-lg shadow-primary/30">
+             <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shine-sweep_1s_ease-in-out]"></div>
+             <span class="material-symbols-outlined text-lg md:text-xl animate-bounce relative z-10">download</span> 
+             <span class="relative z-10 whitespace-nowrap">Download Now</span>
+          </a>
+          <button onclick="toggleAppPreview()" id="preview-btn" class="flex-1 min-w-[180px] py-3.5 px-4 md:py-4 rounded-xl font-headline font-bold text-on-surface uppercase tracking-widest text-[12px] md:text-[14px] flex justify-center items-center gap-2 border border-outline-variant hover:border-primary hover:text-primary transition-all bg-surface-container hover:bg-surface-container-high cursor-pointer">
+             <span class="material-symbols-outlined text-lg md:text-xl">visibility</span> 
+             <span class="whitespace-nowrap">Preview</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let isAppPreviewShowing = false;
+let currentSlide = 0;
+let slideInterval;
+const totalSlides = 6;
+
+function startSlider() {
+  if (slideInterval) clearInterval(slideInterval);
+  slideInterval = setInterval(() => {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+  }, 4000);
+}
+
+function stopSlider() {
+  if (slideInterval) clearInterval(slideInterval);
+}
+
+function updateSlider() {
+  const slider = document.getElementById('app-slider');
+  if (slider) {
+    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    const indicators = document.querySelectorAll('.slide-indicator');
+    indicators.forEach((ind, index) => {
+      if (index === currentSlide) {
+        ind.className = 'slide-indicator w-4 h-1.5 rounded-full bg-primary transition-all duration-300';
+      } else {
+        ind.className = 'slide-indicator w-1.5 h-1.5 rounded-full bg-white/30 transition-all duration-300';
+      }
+    });
+  }
+}
+
+function openAppModal() {
+  const overlay = document.getElementById('app-modal-overlay');
+  const box = document.getElementById('app-modal-box');
+  overlay.classList.remove('hidden');
+  
+  // reset state
+  isAppPreviewShowing = false;
+  document.getElementById('app-default-img').classList.remove('opacity-0');
+  document.getElementById('app-preview-img').classList.add('opacity-0');
+  document.getElementById('preview-btn').innerHTML = '<span class="material-symbols-outlined text-lg md:text-xl">visibility</span> <span class="whitespace-nowrap">Preview</span>';
+  
+  stopSlider();
+  currentSlide = 0;
+  updateSlider();
+  
+  requestAnimationFrame(() => {
+    box.style.opacity = '1';
+    box.style.transform = 'scale(1)';
+  });
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAppModal() {
+  const overlay = document.getElementById('app-modal-overlay');
+  const box = document.getElementById('app-modal-box');
+  box.style.opacity = '0';
+  box.style.transform = 'scale(0.95)';
+  
+  stopSlider();
+  
+  setTimeout(() => {
+    overlay.classList.add('hidden');
+    document.body.style.overflow = '';
+  }, 300);
+}
+
+function toggleAppPreview() {
+  isAppPreviewShowing = !isAppPreviewShowing;
+  const defImg = document.getElementById('app-default-img');
+  const prevImg = document.getElementById('app-preview-img');
+  const btn = document.getElementById('preview-btn');
+  
+  if(isAppPreviewShowing) {
+    defImg.classList.add('opacity-0');
+    prevImg.classList.remove('opacity-0');
+    btn.innerHTML = '<span class="material-symbols-outlined text-lg md:text-xl">visibility_off</span> <span class="whitespace-nowrap">Hide Preview</span>';
+    startSlider();
+  } else {
+    defImg.classList.remove('opacity-0');
+    prevImg.classList.add('opacity-0');
+    btn.innerHTML = '<span class="material-symbols-outlined text-lg md:text-xl">visibility</span> <span class="whitespace-nowrap">Preview</span>';
+    stopSlider();
+    currentSlide = 0;
+    updateSlider();
+  }
+}
+</script>
 </body>
 </html>
