@@ -23,20 +23,32 @@
 <script src="./theme.js"></script>
 </head>
 <body class="bg-background text-on-background font-body min-h-screen overflow-hidden">
-<div id="admin-login-overlay" class="fixed inset-0 z-[200] bg-background flex flex-col items-center justify-center p-4">
-<div class="glass-card w-full max-w-sm p-8 rounded-2xl shadow-[0_0_30px_rgba(255,45,120,0.2)] border-primary/50 text-center">
-<h2 class="text-2xl font-bold text-primary font-['Sora'] mb-2">Admin Login</h2>
-<p class="text-sm text-on-surface-variant mb-6">Enter credentials to access dashboard</p>
-<form id="admin-login-form" class="space-y-4">
-<input required type="text" id="admin-user" class="w-full bg-surface-container border-outline/50 rounded-lg px-5 py-3 focus:ring-primary focus:border-primary text-on-surface outline-none" placeholder="Username">
-<input required type="password" id="admin-pass" class="w-full bg-surface-container border-outline/50 rounded-lg px-5 py-3 focus:ring-primary focus:border-primary text-on-surface outline-none" placeholder="Password">
-<p id="login-error" class="text-error text-xs hidden">Invalid username or password.</p>
-<button type="submit" class="w-full bg-primary text-on-primary py-3 rounded-lg font-headline font-bold hover:shadow-[0_0_16px_rgba(255,45,120,0.4)] transition-all">Login</button>
-</form>
-<div id="sync-applied-msg" class="hidden mt-4 p-3 rounded-lg bg-secondary/20 border border-secondary/40 text-secondary text-xs font-bold">
-✅ New credentials synced! Login with your updated username &amp; password.
-</div>
-</div>
+<div id="admin-login-overlay" class="fixed top-0 left-0 w-full h-[100dvh] z-[200] bg-background flex flex-col items-center justify-center p-4 overflow-hidden grid-bg">
+    <!-- Floating Tech Icons Background -->
+    <div class="login-3d-scene">
+        <span class="material-symbols-outlined floating-icon icon-1 top-[10%] left-[8%]">code</span>
+        <span class="material-symbols-outlined floating-icon icon-2 bottom-[15%] right-[10%]">terminal</span>
+        <span class="material-symbols-outlined floating-icon icon-3 top-[8%] right-[20%]">computer</span>
+        <span class="material-symbols-outlined floating-icon icon-4 bottom-[20%] left-[15%]">memory</span>
+        <span class="material-symbols-outlined floating-icon icon-5 top-[45%] left-[5%]">edit</span>
+        <span class="material-symbols-outlined floating-icon icon-6 top-[35%] right-[5%]">draw</span>
+        <span class="material-symbols-outlined floating-icon icon-7 bottom-[5%] left-[45%]">sports_soccer</span>
+    </div>
+
+    <!-- Premium Login Card -->
+    <div class="premium-glass w-full max-w-sm p-8 md:p-10 rounded-3xl text-center relative z-10">
+        <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary font-headline tracking-tight mb-2 drop-shadow-sm">Admin Login</h2>
+        <p class="text-sm text-on-surface-variant font-medium mb-8">Enter credentials to access dashboard</p>
+        <form id="admin-login-form" class="space-y-5">
+            <input required type="text" id="admin-user" class="w-full bg-surface-container-high/60 border border-outline-variant/60 rounded-xl px-5 py-3.5 focus:ring-2 focus:ring-primary/50 focus:border-primary text-on-surface outline-none font-medium transition-all shadow-inner backdrop-blur-md" placeholder="Username">
+            <input required type="password" id="admin-pass" class="w-full bg-surface-container-high/60 border border-outline-variant/60 rounded-xl px-5 py-3.5 focus:ring-2 focus:ring-primary/50 focus:border-primary text-on-surface outline-none font-medium transition-all shadow-inner backdrop-blur-md" placeholder="Password">
+            <p id="login-error" class="text-error text-xs font-semibold hidden">Invalid username or password.</p>
+            <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary text-on-primary py-3.5 rounded-xl font-headline font-bold text-lg tracking-wide shadow-[0_8px_16px_rgba(255,45,120,0.3)] hover:shadow-[0_12px_24px_rgba(255,45,120,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-md transition-all duration-300">Login</button>
+        </form>
+        <div id="sync-applied-msg" class="hidden mt-4 p-3 rounded-lg bg-secondary/20 border border-secondary/40 text-secondary text-xs font-bold shadow-inner">
+            ✅ New credentials synced! Login with your updated username & password.
+        </div>
+    </div>
 </div>
 <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-background/80 backdrop-blur-md border-b border-primary/30 shadow-[0_0_15px_rgba(0,255,204,0.1)]">
 <div class="flex items-center gap-4">

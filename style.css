@@ -434,3 +434,98 @@ a[href][style*="will-change"] {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
+
+/* ── Premium Admin Login Design ── */
+.login-3d-scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    perspective: 1000px;
+}
+
+/* Floating Icons Background */
+.floating-icon {
+    position: absolute;
+    font-size: 80px !important; /* Material symbols size override */
+    opacity: 0.6; /* Increased visibility */
+    z-index: 0;
+    pointer-events: none;
+    color: var(--color-primary);
+    filter: drop-shadow(0 15px 25px rgba(255, 45, 120, 0.5)); /* Stronger shadow */
+    animation: float-icon 10s ease-in-out infinite alternate;
+}
+
+html.dark .floating-icon {
+    opacity: 0.5;
+    filter: drop-shadow(0 10px 20px rgba(255, 45, 120, 0.7));
+}
+
+.icon-1 {
+    color: var(--color-primary);
+    animation-duration: 9s;
+    font-size: 110px !important;
+}
+
+.icon-2 {
+    color: var(--color-secondary);
+    animation-duration: 12s;
+    animation-delay: -3s;
+    font-size: 95px !important;
+}
+
+.icon-3 {
+    color: var(--color-tertiary);
+    animation-duration: 11s;
+    animation-delay: -5s;
+    font-size: 120px !important;
+}
+
+.icon-4 {
+    color: var(--color-on-surface-variant);
+    animation-duration: 14s;
+    animation-delay: -7s;
+    font-size: 85px !important;
+}
+
+.icon-5 {
+    color: var(--color-primary);
+    animation-duration: 13s;
+    animation-delay: -2s;
+    font-size: 90px !important;
+}
+
+.icon-6 {
+    color: var(--color-secondary);
+    animation-duration: 15s;
+    animation-delay: -9s;
+    font-size: 105px !important;
+}
+
+.icon-7 {
+    color: var(--color-tertiary);
+    animation-duration: 10s;
+    animation-delay: -4s;
+    font-size: 95px !important;
+}
+
+@keyframes float-icon {
+    0% { transform: translateY(0) rotate(-15deg) scale(1); }
+    50% { transform: translateY(-40px) rotate(25deg) scale(1.15); }
+    100% { transform: translateY(15px) rotate(-10deg) scale(0.9); }
+}
+
+/* Clean Glass Card */
+.premium-glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+html.dark .premium-glass {
+    background: rgba(15, 15, 26, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}

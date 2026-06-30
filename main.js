@@ -514,28 +514,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentIndex = pageOrder.indexOf(currentPath);
 
     // Prepare the body for animated transitions
-    document.body.style.transition = 'opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+    const isAdminLogin = currentPath.includes('admin.html') && sessionStorage.getItem('sgcc_admin_auth') !== 'true';
 
-    // Read the direction set by the previous page before navigating here
-    const direction = sessionStorage.getItem('nav_direction') || 'forward';
-
-    // Page entrance animation — slide in from the correct direction
-    if (direction === 'forward') {
+    if (isAdminLogin) {
+        document.body.style.transition = 'opacity 0.4s ease-out';
         document.body.style.opacity = '0';
-        document.body.style.transform = 'translateX(40px)';   // Enter from the right
-    } else {
-        document.body.style.opacity = '0';
-        document.body.style.transform = 'translateX(-40px)';  // Enter from the left
-    }
-
-    // Animate to resting position after a short delay (allows browser to register the start state)
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-        document.body.style.transform = 'translateX(0)';
         setTimeout(() => {
-            document.body.style.transform = 'none'; // Remove inline transform after animation
-        }, 400);
-    }, 50);
+            document.body.style.opacity = '1';
+        }, 50);
+    } else {
+        document.body.style.transition = 'opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        const direction = sessionStorage.getItem('nav_direction') || 'forward';
+        
+        if (direction === 'forward') {
+            document.body.style.opacity = '0';
+            document.body.style.transform = 'translateX(40px)';
+        } else {
+            document.body.style.opacity = '0';
+            document.body.style.transform = 'translateX(-40px)';
+        }
+        
+        setTimeout(() => {
+            document.body.style.opacity = '1';
+            document.body.style.transform = 'translateX(0)';
+            setTimeout(() => {
+                document.body.style.transform = 'none';
+            }, 400);
+        }, 50);
+    }
 
     // Intercept clicks on internal page links to apply exit animation before navigating
     document.addEventListener('click', (e) => {
