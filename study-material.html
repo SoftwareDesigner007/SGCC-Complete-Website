@@ -327,8 +327,8 @@ with Advanced Methods and AI</h3>
 tools for regional language typing speed.</p>
 </div>
 <div class="p-6 pt-0 mt-auto flex gap-3">
-<a onclick="event.preventDefault(); const title = this.closest('.bg-surface-container').querySelector('h3').textContent.trim().replace(/\s+/g, ' '); openViewModal(title, '#');" href="#" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
-<a onclick="event.preventDefault(); openUnavailableModal();" href="#" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer">Download</a>
+<a href="https://drive.google.com/file/d/1L2fwAKvDylh_jXgmU2DbpYbag47pf9Lp/view?usp=drive_link" target="_blank" class="flex-1 py-2 border border-secondary text-secondary font-label text-xs font-bold uppercase tracking-widest hover:bg-secondary/30 transition-all hover:shadow-[0_0_12px_rgba(0,255,204,0.2)] text-center flex items-center justify-center cursor-pointer">View</a>
+<a href="https://drive.google.com/uc?export=download&id=1L2fwAKvDylh_jXgmU2DbpYbag47pf9Lp" class="flex-1 py-2 bg-secondary text-on-secondary font-label text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all text-center flex items-center justify-center cursor-pointer" download>Download</a>
 </div>
 </div>
 <div
@@ -606,7 +606,27 @@ const matIcons = ['picture_as_pdf', 'description', 'slideshow', 'picture_as_pdf'
 const activeCourses = courses;
 grid.innerHTML = activeCourses.map((c) => {
 const i = courses.findIndex(x => x.id === c.id);
-const mat = materials.find(m => m.courseId === c.id) || {};
+let mat = materials.find(m => m.courseId === c.id);
+
+// Ensure Marathi and English Typing courses always have their links even if not in cloud DB yet
+if (!mat) {
+    if (c.id === 'c10') {
+        mat = {
+            viewUrl: 'https://drive.google.com/file/d/1L2fwAKvDylh_jXgmU2DbpYbag47pf9Lp/view?usp=drive_link',
+            downloadUrl: 'https://drive.google.com/file/d/1L2fwAKvDylh_jXgmU2DbpYbag47pf9Lp/view?usp=drive_link',
+            type: 'PDF'
+        };
+    } else if (c.id === 'c11') {
+        mat = {
+            viewUrl: 'https://drive.google.com/file/d/1yGtisIb6mclvJXaRZQSDwWYjNhvDYrmv/view?usp=drive_link',
+            downloadUrl: 'https://drive.google.com/file/d/1yGtisIb6mclvJXaRZQSDwWYjNhvDYrmv/view?usp=drive_link',
+            type: 'PDF'
+        };
+    } else {
+        mat = {};
+    }
+}
+
 const col = colors[i % 3] || 'primary';
 const iconEl = icons[i % icons.length] || 'school';
 const matIcon = matIcons[i % matIcons.length] || 'picture_as_pdf';

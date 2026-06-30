@@ -113,8 +113,44 @@ alert('Course not found!');
 window.location.href = './admin.html';
 }
 }
-document.getElementById('course-form').addEventListener('submit', e => {
+// Cloud Sync configuration
+const JSONBIN_BIN_ID = '69fb633daaba8821977b7752';
+const JSONBIN_MASTER_KEY = '$2a$10$XurIdUSPSkFigbQpqqdNJOIXGaFBtwGIi9cUjCy/SUJNlB.WW9AdK';
+const USE_JSONBIN = JSONBIN_BIN_ID !== 'PASTE_BIN_ID_HERE';
+const JSONBIN_PUT_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
+async function syncToCloud() {
+    if (!USE_JSONBIN) return true;
+    try {
+        const creds = JSON.parse(localStorage.getItem('sgcc_admin_creds') || '{}');
+        const courses = JSON.parse(localStorage.getItem('sgcc_courses') || '[]');
+        const materials = JSON.parse(localStorage.getItem('sgcc_materials') || '[]');
+        const res = await fetch(JSONBIN_PUT_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_MASTER_KEY
+            },
+            body: JSON.stringify({ 
+                username: creds.username || 'BCA', 
+                password: creds.password || 'Ganesh123', 
+                courses, 
+                materials 
+            })
+        });
+        return res.ok;
+    } catch(e) {
+        console.error('Sync failed', e);
+        return false;
+    }
+}
+
+document.getElementById('course-form').addEventListener('submit', async e => {
 e.preventDefault();
+const submitBtn = e.target.querySelector('button[type="submit"]');
+submitBtn.disabled = true;
+submitBtn.textContent = 'Saving...';
+
 const id = document.getElementById('course-id').value;
 let data = getCoursesData();
 const entry = {
@@ -138,6 +174,7 @@ data = data.map(c => c.id === id ? entry : c);
 data.push(entry);
 }
 saveCoursesData(data);
+await syncToCloud();
 window.location.href = './admin.html';
 });
 });

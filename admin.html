@@ -873,10 +873,11 @@ window.location.href = './admin-course.html';
 window.openEditCourse = function(id) {
 window.location.href = `./admin-course.html?id=${id}`;
 };
-window.deleteCourse = function(id) {
+window.deleteCourse = async function(id) {
 if (!confirm('Delete this course?')) return;
 let data = getCoursesData().filter(c => c.id !== id);
 saveCoursesData(data);
+if (typeof syncToCloud === 'function') await syncToCloud();
 renderCourseTable();
 showAdminToast('Course deleted.');
 };
@@ -921,10 +922,11 @@ ${isAdded ? `<button onclick="deleteMaterial('${c.id}')" class="p-2 rounded-lg b
 </tr>`;
 }).join('');
 }
-window.deleteMaterial = function(courseId) {
+window.deleteMaterial = async function(courseId) {
 if (!confirm('Remove study material for this course?')) return;
 let mats = getMaterialsData().filter(m => m.courseId !== courseId);
 saveMaterialsData(mats);
+if (typeof syncToCloud === 'function') await syncToCloud();
 renderMaterialsTable();
 showAdminToast('Study material removed.');
 };
@@ -961,8 +963,13 @@ function closeMatModal() { document.getElementById('material-modal').style.displ
 window.openEditMaterial = openMatModal;
 document.getElementById('close-mat-modal-btn')?.addEventListener('click', closeMatModal);
 document.getElementById('material-modal')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeMatModal(); });
-document.getElementById('material-form')?.addEventListener('submit', e => {
+document.getElementById('material-form')?.addEventListener('submit', async e => {
 e.preventDefault();
+const submitBtn = e.target.querySelector('button[type="submit"]');
+const originalText = submitBtn.textContent;
+submitBtn.disabled = true;
+submitBtn.textContent = 'Saving...';
+
 const courseId = document.getElementById('mat-course-id').value;
 let mats = getMaterialsData().filter(m => m.courseId !== courseId);
 mats.push({ 
@@ -972,9 +979,14 @@ viewUrl: document.getElementById('mat-view-url').value.trim(),
 downloadUrl: document.getElementById('mat-download-url').value.trim()
 });
 saveMaterialsData(mats);
+if (typeof syncToCloud === 'function') await syncToCloud();
+
 closeMatModal();
 renderMaterialsTable();
 showAdminToast('Study material updated!');
+
+submitBtn.disabled = false;
+submitBtn.textContent = originalText;
 });
 // Modals Logic for Settings and Profile
 const settingsBtn = document.getElementById('admin-settings-btn');
